@@ -72,7 +72,7 @@ DELETE {{base_url}}/api/appointments/appointment_id
 Authorization: {{auth_token}}
 
 ### Test for getting an appointment
-GET {{base_url}}/api/appointments/670c4fda40ae5dc48c08dc33
+GET {{base_url}}/api/appointments/670c51a76b5a3055e171e60b
 Authorization: {{auth_token}}
 
 
@@ -85,5 +85,16 @@ Content-Type: application/json
   "customer_id": "670c4d0023115cf01829b471",
   "request_work": "Tailoring a suit",
   "date": "2023-12-31T12:00:00",
-  "tailor_id": "60d5ec49f8d2b2a5c8b5e4d2"
+  "tailor_id": "670afca3f7397b370e9d76c8"
+}
+
+### Test for creating an appointment with a tailor
+POST {{base_url}}/api/tailors/670afca3f7397b370e9d76c8/appointments
+Content-Type: application/json
+
+{
+  "customer_id": "670c4d0023115cf01829b471",
+  "request_work": "Tailoring a suit",
+  "additional_notes": "Please make it slim fit",
+  "date": "2023-12-31T12:00:00"
 }

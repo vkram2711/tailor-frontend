@@ -116,8 +116,9 @@ async def create_appointment_with_customer(appointment: Appointment, user: dict 
 
 
 @app.post("/api/tailors/{tailor_id}/appointments")
-async def create_appointment_with_tailor(tailor_id: str, appointment: Appointment, user: dict = Depends(get_current_user)):
-    customer_data = await customers_collection.find_one({"_id": appointment.customer_id, "tailor_id": user["sub"]})
+async def create_appointment_with_tailor(tailor_id: str, appointment: Appointment):
+    print(appointment.customer_id, tailor_id)
+    customer_data = await customers_collection.find_one({"_id": ObjectId(appointment.customer_id), "tailor_id": tailor_id})
     if not customer_data:
         raise HTTPException(status_code=404, detail="Customer not found")
 
