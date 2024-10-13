@@ -1,0 +1,71 @@
+# Test your FastAPI endpoints
+
+GET http://127.0.0.1:8000/
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/hello/User
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/customers
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "1234567890",
+  "measurements": [],
+  "additional_info": {
+    "notes": "Regular customer",
+    "preferences": "None"
+  }
+}
+
+###
+
+GET http://127.0.0.1:8000/customers/john.doe@example.com
+Accept: application/json
+
+###
+
+PUT http://127.0.0.1:8000/customers/john.doe@example.com
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "0987654321",
+  "measurements": [],
+  "additional_info": {
+    "notes": "Updated notes",
+    "preferences": "Updated preferences"
+  }
+}
+
+###
+
+DELETE http://127.0.0.1:8000/customers/john.doe@example.com
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/customers/john.doe@example.com/measurements
+Content-Type: application/json
+
+{
+  "entries": [
+    {
+      "type": "weight",
+      "value": 70.5
+    }
+  ],
+  "date": "2023-10-01T00:00:00Z"
+}
+
+###
+
+GET http://127.0.0.1:8000/customers/john.doe@example.com/measurements
+Accept: application/json
