@@ -1,71 +1,89 @@
-# Test your FastAPI endpoints
+### Set the base URL and authorization token
+@base_url = http://localhost:8000
+@auth_token =Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBpYll2WjQ2ZXFzQWNiRGtLMl9PWSJ9.eyJpc3MiOiJodHRwczovL2Rldi1rdGlwcjdsb2oxZjg0cWZ3LnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw2NzBhZmNhM2Y3Mzk3YjM3MGU5ZDc2YzgiLCJhdWQiOlsiaHR0cHM6Ly9kZXYta3RpcHI3bG9qMWY4NHFmdy51cy5hdXRoMC5jb20vYXBpL3YyLyIsImh0dHBzOi8vZGV2LWt0aXByN2xvajFmODRxZncudXMuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTcyODg1OTI4NywiZXhwIjoxNzI4OTQ1Njg3LCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIiwiYXpwIjoibE5HWmxvNGh5SWFkamhMZm1FNXEzaWZWR0trdHNXZGMifQ.XAhmR2n_jm1xSIZE-1uH_90iT7fJY8plWdSxXBfTBCQPcNifZVO07im8UIn8FTcZgYcMy95ULzcUwvxvjPCJ_mqmrkk8-qfub1BBjw_cSdPXq13xVpy3XJd9ySCG1W_AwNnHPSLC8mK8YFxy3LrjKGsndCX8m88CX56RRX51SZP4q9PLwzwh5ceiWMLH-lBNcbtBsIHYNap-Rcmhp9WEVpgwByxiKx4PxdCq3nKzoeihCPZHd9F4KP73aBhwGwBzpaotv2E33lMRRKUY-mnCJcnk0BlzU1VkasmvKF09XV68KkHR-6UIPFqwUksD-nzHahcIyftV9mXLM5PXo6ZZYA
 
-GET http://127.0.0.1:8000/
-Accept: application/json
+### Test for getting a customer by ID
+GET {{base_url}}/api/customers/customer_id
+Authorization: {{auth_token}}
 
-###
+### Test for getting all customers
+GET {{base_url}}/api/customers
+Authorization: {{auth_token}}
 
-GET http://127.0.0.1:8000/hello/User
-Accept: application/json
-
-###
-
-POST http://127.0.0.1:8000/customers
+### Test for creating a new customer
+POST {{base_url}}/api/customers
+Authorization: {{auth_token}}
 Content-Type: application/json
 
 {
   "name": "John Doe",
   "email": "john.doe@example.com",
-  "phone": "1234567890",
+  "phone": "123-456-7890",
+  "gender": "male",
   "measurements": [],
   "additional_info": {
-    "notes": "Regular customer",
-    "preferences": "None"
-  }
+    "notes": "Prefers evening appointments",
+    "preferences": "Slim fit"
+  },
+  "tailor_id": "60d5ec49f8d2b2a5c8b5e4d2"
 }
 
-###
-
-GET http://127.0.0.1:8000/customers/john.doe@example.com
-Accept: application/json
-
-###
-
-PUT http://127.0.0.1:8000/customers/john.doe@example.com
+### Test for updating customer information
+PUT {{base_url}}/api/customers/customer_id
+Authorization: {{auth_token}}
 Content-Type: application/json
 
 {
-  "name": "John Doe",
-  "email": "john.doe@example.com",
-  "phone": "0987654321",
+  "name": "John Doe Updated",
+  "email": "john.doe.updated@example.com",
+  "phone": "987-654-3210",
+  "gender": "male",
   "measurements": [],
   "additional_info": {
-    "notes": "Updated notes",
-    "preferences": "Updated preferences"
-  }
+    "notes": "Prefers morning appointments",
+    "preferences": "Regular fit"
+  },
+  "tailor_id": "60d5ec49f8d2b2a5c8b5e4d2"
 }
 
-###
+### Test for deleting a customer
+DELETE {{base_url}}/api/customers/customer_id
+Authorization: {{auth_token}}
 
-DELETE http://127.0.0.1:8000/customers/john.doe@example.com
-Accept: application/json
+### Test for getting user ID
+GET {{base_url}}/api/tailor/id
+Authorization: {{auth_token}}
 
-###
-
-POST http://127.0.0.1:8000/customers/john.doe@example.com/measurements
+### Test for rescheduling an appointment
+PUT {{base_url}}/api/appointments/appointment_id/reschedule
+Authorization: {{auth_token}}
 Content-Type: application/json
 
 {
-  "entries": [
-    {
-      "type": "weight",
-      "value": 70.5
-    }
-  ],
-  "date": "2023-10-01T00:00:00Z"
+  "new_date": "2023-12-31T12:00:00"
 }
 
-###
+### Test for confirming an appointment
+PUT {{base_url}}/api/appointments/appointment_id/confirm
+Authorization: {{auth_token}}
 
-GET http://127.0.0.1:8000/customers/john.doe@example.com/measurements
-Accept: application/json
+### Test for deleting an appointment
+DELETE {{base_url}}/api/appointments/appointment_id
+Authorization: {{auth_token}}
+
+### Test for getting an appointment
+GET {{base_url}}/api/appointments/670c4fda40ae5dc48c08dc33
+Authorization: {{auth_token}}
+
+
+### Test for creating an appointment
+POST {{base_url}}/api/appointments
+Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "customer_id": "670c4d0023115cf01829b471",
+  "request_work": "Tailoring a suit",
+  "date": "2023-12-31T12:00:00",
+  "tailor_id": "60d5ec49f8d2b2a5c8b5e4d2"
+}
