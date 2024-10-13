@@ -9,6 +9,7 @@ const CreateCustomerPage = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
+    const [gender, setGender] = useState('');
     const { getAccessTokenSilently } = useAuth0();
     const navigate = useNavigate();
 
@@ -19,7 +20,8 @@ const CreateCustomerPage = () => {
             await axiosInstance.post('/api/customers', {
                 name,
                 email,
-                phone
+                phone,
+                gender
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -61,6 +63,19 @@ const CreateCustomerPage = () => {
                         onChange={(e) => setPhone(e.target.value)}
                         required
                     />
+                </div>
+                <div>
+                    <label>Gender:</label>
+                    <select
+                        value={gender}
+                        onChange={(e) => setGender(e.target.value)}
+                        required
+                    >
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
                 </div>
                 <button type="submit">Create</button>
             </form>

@@ -36,11 +36,11 @@ const CustomersPage = () => {
             <Link to="/customers/new">Create New Customer</Link>
             <ul>
                 {customers.map((customer) => (
-                    <li key={customer.customer_id}>
+                    <li key={customer.id}>
                         <h2>{customer.name}</h2>
                         <p>Email: {customer.email}</p>
                         <p>Phone: {customer.phone}</p>
-                        <Link to={`/customers/${customer.customer_id}`}>View Details</Link>
+                        <Link to={`/customers/${customer.id}`}>View Details</Link>
                     </li>
                 ))}
             </ul>
