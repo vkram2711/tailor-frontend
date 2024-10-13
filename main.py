@@ -172,3 +172,8 @@ async def delete_appointment(appointment_id: str, user: dict = Depends(get_curre
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Appointment not found")
     return {"message": "Appointment deleted successfully"}
+
+
+@app.get("/api/tailor/id")
+async def get_user_id(user: dict = Depends(get_current_user)):
+    return {"tailor_id": user["sub"]}
