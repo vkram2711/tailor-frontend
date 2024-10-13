@@ -1,7 +1,24 @@
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, EmailStr
+from bson import ObjectId
+from pydantic import BaseModel
+from pydantic import EmailStr
+
+
+class MongoModel(BaseModel):
+    id: str
+
+    @classmethod
+    def from_mongo(cls, data: dict):
+        if data:
+            data["id"] = str(data.pop("_id"))
+        return cls(**data)
+
+    def to_mongo(self) -> dict:
+        data = self.dict()
+        data["_id"] = ObjectId(data.pop("id"))
+        return data
 
 
 class MeasurementEntry(BaseModel):
@@ -20,10 +37,20 @@ class AdditionalInfo(BaseModel):
     preferences: Optional[str] = None
 
 
-class Customer(BaseModel):
+class Customer(MongoModel):
     name: str
     email: EmailStr
     phone: str
+    gender: str
     measurements: Optional[List[Measurement]] = []
     additional_info: Optional[AdditionalInfo] = None
-    user_id: Optional[str] = None
+    tailor_id: Optional[str] = None
+
+
+class Appointment(MongoModel):
+    customer: Customer
+    request_work: str
+    additional_notes: Optional[str] = None
+    date: datetime
+    confirmed: Optional[bool] = False
+    tailor_id: Optional[str] = None

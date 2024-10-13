@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import uuid4
 
 from bson import ObjectId
@@ -5,8 +6,8 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
 from auth0 import get_current_user
-from models import Customer, Measurement
-from mongo_utils import customers_collection
+from models import Customer, Measurement, Appointment
+from mongo_utils import customers_collection, appointments_collection
 
 app = FastAPI()
 
@@ -30,9 +31,8 @@ app.add_middleware(
 
 @app.post("/api/customers")
 async def create_customer(customer: Customer, user: dict = Depends(get_current_user)):
-    customer.user_id = user["sub"]
-    customer_dict = customer.dict()
-    customer_dict["_id"] = ObjectId()
+    customer.tailor_id = user["sub"]
+    customer_dict = customer.to_mongo()
     existing_customer = await customers_collection.find_one({"email": customer.email})
     if existing_customer:
         raise HTTPException(status_code=400, detail="Customer already exists")
@@ -42,27 +42,23 @@ async def create_customer(customer: Customer, user: dict = Depends(get_current_u
 
 @app.get("/api/customers")
 async def get_all_customers(user: dict = Depends(get_current_user)):
-    customers = await customers_collection.find({"user_id": user["sub"]}).to_list(length=None)
-    for customer in customers:
-        customer["customer_id"] = str(customer["_id"])
-        del customer["_id"]
-    return customers
+    customers = await customers_collection.find({"tailor_id": user["sub"]}).to_list(length=None)
+    return [Customer.from_mongo(customer) for customer in customers]
 
 
 @app.get("/api/customers/{customer_id}")
 async def get_customer(customer_id: str, user: dict = Depends(get_current_user)):
-    customer = await customers_collection.find_one({"_id": ObjectId(customer_id)})
-    if not customer or customer["user_id"] != user["sub"]:
+    customer_data = await customers_collection.find_one({"_id": ObjectId(customer_id)})
+    if not customer_data or customer_data["tailor_id"] != user["sub"]:
         raise HTTPException(status_code=404, detail="Customer not found")
-    customer["customer_id"] = str(customer["_id"])
-    del customer["_id"]
+    customer = Customer.from_mongo(customer_data)
     return customer
 
 
 @app.put("/api/customers/{customer_id}")
 async def update_customer(customer_id: str, customer: Customer, user: dict = Depends(get_current_user)):
     existing_customer = await customers_collection.find_one({"_id": ObjectId(customer_id)})
-    if not existing_customer or existing_customer["user_id"] != user["sub"]:
+    if not existing_customer or existing_customer["tailor_id"] != user["sub"]:
         raise HTTPException(status_code=404, detail="Customer not found")
     await customers_collection.update_one({"_id": ObjectId(customer_id)}, {"$set": customer.dict()})
     return {"message": "Customer updated successfully"}
@@ -71,7 +67,7 @@ async def update_customer(customer_id: str, customer: Customer, user: dict = Dep
 @app.delete("/api/customers/{customer_id}")
 async def delete_customer(customer_id: str, user: dict = Depends(get_current_user)):
     existing_customer = await customers_collection.find_one({"_id": ObjectId(customer_id)})
-    if not existing_customer or existing_customer["user_id"] != user["sub"]:
+    if not existing_customer or existing_customer["tailor_id"] != user["sub"]:
         raise HTTPException(status_code=404, detail="Customer not found")
     result = await customers_collection.delete_one({"_id": ObjectId(customer_id)})
     if result.deleted_count == 0:
@@ -82,7 +78,7 @@ async def delete_customer(customer_id: str, user: dict = Depends(get_current_use
 @app.post("/api/customers/{customer_id}/measurements")
 async def create_measurements(customer_id: str, measurement: Measurement, user: dict = Depends(get_current_user)):
     customer = await customers_collection.find_one({"_id": ObjectId(customer_id)})
-    if not customer or customer["user_id"] != user["sub"]:
+    if not customer or customer["tailor_id"] != user["sub"]:
         raise HTTPException(status_code=404, detail="Customer not found")
     if not measurement.measurement_id:
         measurement.measurement_id = str(uuid4())
@@ -98,6 +94,57 @@ async def create_measurements(customer_id: str, measurement: Measurement, user: 
 @app.get("/api/customers/{customer_id}/measurements")
 async def get_measurements(customer_id: str, user: dict = Depends(get_current_user)):
     customer = await customers_collection.find_one({"_id": ObjectId(customer_id)})
-    if not customer or customer["user_id"] != user["sub"]:
+    if not customer or customer["tailor_id"] != user["sub"]:
         raise HTTPException(status_code=404, detail="Customer not found")
     return customer.get("measurements", [])
+
+
+@app.post("/api/appointments")
+async def create_appointment_with_customer(appointment: Appointment, user: dict = Depends(get_current_user)):
+    appointment.tailor_id = user["sub"]
+    appointment_dict = appointment.to_mongo()
+    await appointments_collection.insert_one(appointment_dict)
+    return {"message": "Appointment created successfully", "id": str(appointment_dict["_id"])}
+
+
+@app.post("/api/tailors/{tailor_id}/appointments")
+async def create_appointment_with_tailor(tailor_id: str, appointment: Appointment, user: dict = Depends(get_current_user)):
+    customer_data = await customers_collection.find_one({"email": appointment.customer.email, "tailor_id": user["sub"]})
+    if not customer_data:
+        customer_dict = appointment.customer.to_mongo()
+        await customers_collection.insert_one(customer_dict)
+        appointment.customer = customer_dict
+    else:
+        appointment.customer = customer_data
+
+    appointment.tailor_id = tailor_id
+    appointment_dict = appointment.to_mongo()
+    await appointments_collection.insert_one(appointment_dict)
+    return {"message": "Appointment created successfully", "id": str(appointment_dict["_id"])}
+
+
+@app.put("/api/appointments/{appointment_id}/reschedule")
+async def reschedule_appointment(appointment_id: str, new_date: datetime, user: dict = Depends(get_current_user)):
+    existing_appointment = await appointments_collection.find_one({"_id": ObjectId(appointment_id)})
+    if not existing_appointment or existing_appointment["tailor_id"] != user["sub"]:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    await appointments_collection.update_one({"_id": ObjectId(appointment_id)}, {"$set": {"date": new_date}})
+    return {"message": "Appointment rescheduled successfully"}
+
+
+@app.put("/api/appointments/{appointment_id}/confirm")
+async def confirm_appointment(appointment_id: str, user: dict = Depends(get_current_user)):
+    existing_appointment = await appointments_collection.find_one({"_id": ObjectId(appointment_id)})
+    if not existing_appointment or existing_appointment["tailor_id"] != user["sub"]:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    await appointments_collection.update_one({"_id": ObjectId(appointment_id)}, {"$set": {"confirmed": True}})
+    return {"message": "Appointment confirmed successfully"}
+
+
+@app.put("/api/appointments/{appointment_id}/cancel")
+async def cancel_appointment(appointment_id: str, user: dict = Depends(get_current_user)):
+    existing_appointment = await appointments_collection.find_one({"_id": ObjectId(appointment_id)})
+    if not existing_appointment or existing_appointment["tailor_id"] != user["sub"]:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    await appointments_collection.update_one({"_id": ObjectId(appointment_id)}, {"$set": {"status": "cancelled"}})
+    return {"message": "Appointment cancelled successfully"}

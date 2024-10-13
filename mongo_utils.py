@@ -9,3 +9,4 @@ uri = "mongodb+srv://vkram:8NTKwyd2cvfMYPrS@tailor.hvxg2.mongodb.net/?retryWrite
 client = AsyncIOMotorClient(uri)
 db = client.mydatabase
 customers_collection = db.customers
+appointments_collection = db.appointments
