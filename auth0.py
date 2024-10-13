@@ -10,6 +10,10 @@ API_IDENTIFIER = "https://dev-ktipr7loj1f84qfw.us.auth0.com/api/v2/"
 ALGORITHMS = ["RS256"]
 
 
+def strip_auth0_prefix(tailor_id: str) -> str:
+    return tailor_id.replace("auth0|", "")
+
+
 async def get_jwks():
     async with httpx.AsyncClient() as client:
         response = await client.get(f"https://{AUTH0_DOMAIN}/.well-known/jwks.json")
@@ -53,6 +57,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Unable to parse authentication token."
             )
+        payload["sub"] = strip_auth0_prefix(payload["sub"])
         return payload
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

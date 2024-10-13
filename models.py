@@ -7,7 +7,7 @@ from pydantic import EmailStr
 
 
 class MongoModel(BaseModel):
-    id: str
+    id: Optional[str] = None
 
     @classmethod
     def from_mongo(cls, data: dict):
@@ -48,7 +48,7 @@ class Customer(MongoModel):
 
 
 class Appointment(MongoModel):
-    customer: Customer
+    customer_id: str
     request_work: str
     additional_notes: Optional[str] = None
     date: datetime
