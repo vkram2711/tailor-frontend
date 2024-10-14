@@ -175,6 +175,12 @@ async def delete_appointment(appointment_id: str, user: dict = Depends(get_curre
     return {"message": "Appointment deleted successfully"}
 
 
+@app.get("/api/tailors/appointments")
+async def get_all_appointments_for_tailor(user: dict = Depends(get_current_user)):
+    appointments = await appointments_collection.find({"tailor_id": user["sub"]}).sort("date", 1).to_list(length=None)
+    return [Appointment.from_mongo(appointment) for appointment in appointments]
+
+
 @app.get("/api/tailor/id")
 async def get_user_id(user: dict = Depends(get_current_user)):
     return {"tailor_id": user["sub"]}

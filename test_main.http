@@ -98,3 +98,7 @@ Content-Type: application/json
   "additional_notes": "Please make it slim fit",
   "date": "2023-12-31T12:00:00"
 }
+
+### Get all appointments for a tailor
+GET {{base_url}}/api/tailors/appointments
+Authorization: {{auth_token}}
