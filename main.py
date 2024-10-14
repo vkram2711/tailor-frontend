@@ -145,6 +145,11 @@ async def get_appointment(appointment_id: str, user: dict = Depends(get_current_
     appointment_dict["customer"] = customer.dict()
     return appointment_dict
 
+@app.get("/api/appointments")
+async def get_appointments(user: dict = Depends(get_current_user)):
+    appointments = await appointments_collection.find({"tailor_id": user["sub"]}).to_list(length=None)
+    return [Appointment.from_mongo(appointment) for appointment in appointments]
+
 
 @app.put("/api/appointments/{appointment_id}/reschedule")
 async def reschedule_appointment(appointment_id: str, new_date: datetime, user: dict = Depends(get_current_user)):
