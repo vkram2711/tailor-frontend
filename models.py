@@ -40,8 +40,8 @@ class AdditionalInfo(BaseModel):
 class Customer(MongoModel):
     name: str
     email: EmailStr
-    phone: str
-    gender: str
+    phone: Optional[str] = None
+    gender: Optional[str] = None
     measurements: Optional[List[Measurement]] = []
     additional_info: Optional[AdditionalInfo] = None
     tailor_id: Optional[str] = None
