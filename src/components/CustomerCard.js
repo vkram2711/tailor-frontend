@@ -11,6 +11,12 @@ const CustomerCard = ({ customer }) => {
       <p className={`text-secondary ${isDarkMode ? themes.dark.textColor : themes.light.textColor}`}>{customer.email}</p>
       <p className={`text-secondary ${isDarkMode ? themes.dark.textColor : themes.light.textColor}`}>{customer.phone}</p>
       <Link to={`/customers/${customer.id}`} className={`bg-${isDarkMode ? themes.dark.primaryColor : themes.light.primaryColor} text-white font-bold py-2 px-4 rounded`}>View Details</Link>
+      <Link
+                to={`/appointments/new?customerId=${customer.id}`} // Pass customer ID in URL
+                className="mt-4 inline-block bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"
+      >
+        New Appointment
+      </Link>
     </div>
   );
 };
