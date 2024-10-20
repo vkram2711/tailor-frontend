@@ -61,6 +61,7 @@ const CreateAppointmentPage = () => {
                 time: appointmentTime,
                 request_work: requestWork,
                 additional_notes: additionalNotes,
+                confirmed: true
             }, {
                 headers: { Authorization: `Bearer ${token}` },
             });
