@@ -7,6 +7,8 @@ import CustomerDetailPage from './pages/CustomerDetailPage';
 import CreateCustomerPage from './pages/CreateCustomerPage';
 import CreateAppointmentPage from './pages/CreateAppointmentPage';
 import CalendarPage from './pages/CalendarPage';
+import CustomerBookAppointment from './pages/CustomerBookAppointment';
+import ThankYouPage from './pages/ThankYouPage';
 import Menu from './components/Menu'
 
 const App = () => {
@@ -23,6 +25,8 @@ const App = () => {
               <Route path="/appointments/new" element={<CreateAppointmentPage />} />
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/" exact element={<CustomersPage />} />
+              <Route path="/book-appointment/:tailorId" element={<CustomerBookAppointment />} />
+              <Route path="/thank-you" element={<ThankYouPage />} />
             </Routes>
           </div>
         </div>

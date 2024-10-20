@@ -1,16 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useTheme } from '../context/ThemeContext'; 
-import { IoMoon } from "react-icons/io5";
-import { IoSunny } from "react-icons/io5";
+import { useTheme } from '../context/ThemeContext';
+import { IoMoon, IoSunny } from "react-icons/io5";
+import axiosInstance from '../axiosInstance';
 
 const Menu = () => {
-  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0();
   const { isDarkMode, toggleTheme } = useTheme();
+  const [tailorId, setTailorId] = useState(null);
+
+  useEffect(() => {
+    const fetchTailorId = async () => {
+      if (isAuthenticated) {
+        try {
+          const token = await getAccessTokenSilently();
+          const response = await axiosInstance.get('/api/tailor/id', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setTailorId(response.data.tailor_id);
+        } catch (error) {
+          console.error('Error fetching tailor ID:', error);
+        }
+      }
+    };
+
+    fetchTailorId();
+  }, [isAuthenticated, getAccessTokenSilently]);
 
   const darkModeHandler = () => {
-    toggleTheme(); 
+    toggleTheme();
     document.body.classList.toggle("dark", !isDarkMode);
   };
 
@@ -25,9 +46,12 @@ const Menu = () => {
           >
             {isDarkMode ? <IoSunny className="text-yellow-500" /> : <IoMoon className="text-gray-800" />}
           </button>
+          {tailorId && (
+            <Link to={`/book-appointment/${tailorId}`} className={`text-${isDarkMode ? 'gray-100' : 'gray-800'} mx-4`}>Customer books app.</Link>
+          )}
           <Link to="/customers" className={`text-${isDarkMode ? 'gray-100' : 'gray-800'} mx-4`}>Customers</Link>
           <Link to="/calendar" className={`text-${isDarkMode ? 'gray-100' : 'gray-800'} mx-4`}>Calendar</Link>
-          <Link to="/appointments/new" className={`text-${isDarkMode ? 'gray-100' : 'gray-800'} mx-4`}>Create Appointment</Link> {/* Link to create appointment */}
+          <Link to="/appointments/new" className={`text-${isDarkMode ? 'gray-100' : 'gray-800'} mx-4`}>Create Appointment</Link>
           {isAuthenticated ? (
             <button
               onClick={() => logout({ returnTo: window.location.origin })}
