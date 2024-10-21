@@ -2,12 +2,27 @@ from datetime import datetime
 from uuid import uuid4
 
 from bson import ObjectId
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from pydantic import EmailStr, SecretStr
 
 from auth0 import get_current_user
 from models import Customer, Measurement, Appointment
 from mongo_utils import customers_collection, appointments_collection
+
+pending_appointments = []
+# email_config = ConnectionConfig(
+#     MAIL_USERNAME = "elbion@uni.minerva.edu",
+#     MAIL_PASSWORD = SecretStr("test123"),
+#     MAIL_FROM = EmailStr("elbion@uni.minerva.edu"),
+#     MAIL_PORT = 587,
+#     MAIL_SERVER = "smtp.gmail.com",
+#     MAIL_STARTTLS = True,
+#     MAIL_SSL_TLS = False,
+#     USE_CREDENTIALS = True,
+#     VALIDATE_CERTS = True
+# )
 
 app = FastAPI()
 
@@ -28,17 +43,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+async def send_confirmation_email(email: EmailStr, appointment_details: str):
+    print(email, appointment_details)
+
 
 @app.post("/api/customers")
 async def create_customer(customer: Customer, user: dict = Depends(get_current_user)):
-    customer.tailor_id = user["sub"]
     customer_dict = customer.to_mongo()
-    existing_customer = await customers_collection.find_one({"email": customer.email})
+    customer_dict["tailor_id"] = user["sub"]
+    existing_customer = await customers_collection.find_one({"email": customer.email, "tailor_id": customer.tailor_id})
     if existing_customer:
         raise HTTPException(status_code=400, detail="Customer already exists")
     await customers_collection.insert_one(customer_dict)
     return {"message": "Customer created successfully", "id": str(customer_dict["_id"])}
 
+@app.get("/api/tailors/{tailor_id}/customers/check")
+async def check_customer_exists(email: str, tailor_id: str):
+    customer_data = await customers_collection.find_one({"email": email, "tailor_id": tailor_id})
+    if customer_data:
+        return {"exists": True, "id": str(customer_data["_id"])}
+    return {"exists": False}
 
 @app.get("/api/customers")
 async def get_all_customers(user: dict = Depends(get_current_user)):
@@ -106,6 +130,31 @@ async def get_measurements(customer_id: str, user: dict = Depends(get_current_us
         raise HTTPException(status_code=404, detail="Customer not found")
     return customer.get("measurements", [])
 
+@app.post("/api/tailors/{tailor_id}/appointments/book")
+async def create_appointment_for_customer(tailor_id: str, appointment: Appointment, background_tasks: BackgroundTasks):
+    # Check if the customer exists
+    customer_data = await customers_collection.find_one({"_id": ObjectId(appointment.customer_id), "tailor_id": tailor_id})
+    if not customer_data:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    appointment.tailor_id = tailor_id
+    appointment.confirmed = False
+    appointment_dict = appointment.to_mongo()
+    await appointments_collection.insert_one(appointment_dict)
+    
+    # Add to pending appointments
+    pending_appointments.append(str(appointment_dict["_id"]))
+    
+    # Notify tailor (in a real-world scenario, you'd use a proper notification system)
+    background_tasks.add_task(notify_tailor, tailor_id, str(appointment_dict["_id"]))
+    
+    return {"message": "Appointment booked successfully", "id": str(appointment_dict["_id"])}
+
+@app.get("/api/tailor/pending-appointments")
+async def get_pending_appointments(user: dict = Depends(get_current_user)):
+    tailor_id = user["sub"]
+    pending = await appointments_collection.find({"tailor_id": tailor_id, "confirmed": False}).to_list(length=None)
+    return [Appointment.from_mongo(appointment) for appointment in pending]
 
 @app.post("/api/appointments")
 async def create_appointment_with_customer(appointment: Appointment, user: dict = Depends(get_current_user)):
@@ -117,12 +166,10 @@ async def create_appointment_with_customer(appointment: Appointment, user: dict 
 
 @app.post("/api/tailors/{tailor_id}/appointments")
 async def create_appointment_with_tailor(tailor_id: str, appointment: Appointment):
-    print(appointment.customer_id, tailor_id)
     customer_data = await customers_collection.find_one({"_id": ObjectId(appointment.customer_id), "tailor_id": tailor_id})
     if not customer_data:
         raise HTTPException(status_code=404, detail="Customer not found")
 
-    appointment.customer_id = str(customer_data["_id"])
     appointment.tailor_id = tailor_id
     appointment_dict = appointment.to_mongo()
     await appointments_collection.insert_one(appointment_dict)
@@ -161,11 +208,22 @@ async def reschedule_appointment(appointment_id: str, new_date: datetime, user: 
 
 
 @app.put("/api/appointments/{appointment_id}/confirm")
-async def confirm_appointment(appointment_id: str, user: dict = Depends(get_current_user)):
+async def confirm_appointment(appointment_id: str, background_tasks: BackgroundTasks, user: dict = Depends(get_current_user)):
     existing_appointment = await appointments_collection.find_one({"_id": ObjectId(appointment_id)})
     if not existing_appointment or existing_appointment["tailor_id"] != user["sub"]:
         raise HTTPException(status_code=404, detail="Appointment not found")
+    
     await appointments_collection.update_one({"_id": ObjectId(appointment_id)}, {"$set": {"confirmed": True}})
+    
+    # Remove from pending appointments
+    if appointment_id in pending_appointments:
+        pending_appointments.remove(appointment_id)
+    
+    # Send confirmation email to customer
+    customer = await customers_collection.find_one({"_id": ObjectId(existing_appointment["customer_id"])})
+    if customer:
+        background_tasks.add_task(send_confirmation_email, customer["email"], str(existing_appointment))
+    
     return {"message": "Appointment confirmed successfully"}
 
 
@@ -189,3 +247,7 @@ async def get_all_appointments_for_tailor(user: dict = Depends(get_current_user)
 @app.get("/api/tailor/id")
 async def get_user_id(user: dict = Depends(get_current_user)):
     return {"tailor_id": user["sub"]}
+
+
+async def notify_tailor(tailor_id: str, appointment_id: str):
+    print(f"Notification: New appointment {appointment_id} for tailor {tailor_id}")
