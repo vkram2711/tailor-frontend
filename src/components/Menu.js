@@ -46,9 +46,7 @@ const Menu = () => {
           >
             {isDarkMode ? <IoSunny className="text-yellow-500" /> : <IoMoon className="text-gray-800" />}
           </button>
-          {tailorId && (
-            <Link to={`/book-appointment/${tailorId}`} className={`text-${isDarkMode ? 'gray-100' : 'gray-800'} mx-4`}>Customer books app.</Link>
-          )}
+          <Link to={`/book-appointment/${tailorId}`} className={`text-${isDarkMode ? 'gray-100' : 'gray-800'} mx-4`}>Customer books app.</Link>
           <Link to="/customers" className={`text-${isDarkMode ? 'gray-100' : 'gray-800'} mx-4`}>Customers</Link>
           <Link to="/calendar" className={`text-${isDarkMode ? 'gray-100' : 'gray-800'} mx-4`}>Calendar</Link>
           <Link to="/appointments/new" className={`text-${isDarkMode ? 'gray-100' : 'gray-800'} mx-4`}>Create Appointment</Link>
