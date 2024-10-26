@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import axiosInstance from '../axiosInstance';
 import { FaUser, FaEnvelope, FaPhone, FaRuler, FaNotesMedical, FaHeart, FaPlus, FaTrash, FaClock, FaCalendar } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 const CustomerBookAppointment = () => {
+    const { t } = useTranslation();
     const { tailorId } = useParams();
     const navigate = useNavigate();
 
@@ -58,13 +60,13 @@ const CustomerBookAppointment = () => {
             if (response.data.exists) {
                 setCustomerId(response.data.id);
                 setStep('booking');
-                setMessage("Welcome back! We've found your information. You can now book your appointment.");
+                setMessage(t("Welcome back! We've found your information. You can now book your appointment."));
             } else {
                 setStep('registration');
-                setMessage("We couldn't find your email in our system. Please provide some additional information to register.");
+                setMessage(t("We couldn't find your email in our system. Please provide some additional information to register."));
             }
         } catch (error) {
-            setError('An error occurred. Please try again.');
+            setError(t('An error occurred. Please try again.'));
         } finally {
             setLoading(false);
         }
@@ -97,9 +99,9 @@ const CustomerBookAppointment = () => {
             const response = await axiosInstance.post('/api/public/customers', customerData);
             setCustomerId(response.data.id);
             setStep('booking');
-            setMessage("Thank you for registering! You can now book your appointment.");
+            setMessage(t("Thank you for registering! You can now book your appointment."));
         } catch (error) {
-            setError('Error creating customer. Please try again.');
+            setError(t('Error creating customer. Please try again.'));
         } finally {
             setLoading(false);
         }
@@ -119,7 +121,7 @@ const CustomerBookAppointment = () => {
             });
             navigate('/thank-you');
         } catch (error) {
-            setError('Error booking appointment. Please try again.');
+            setError(t('Error booking appointment. Please try again.'));
         } finally {
             setLoading(false);
         }
@@ -137,12 +139,12 @@ const CustomerBookAppointment = () => {
                 <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-500 text-white flex items-center justify-center flex-shrink-0">
                     <FaEnvelope className="h-6 w-6 sm:h-8 sm:w-8" />
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 ml-4">Book Appointment</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 ml-4">{t('Book Appointment')}</h1>
             </div>
-            <p className="mb-4 text-gray-600">Please enter your email address to begin the booking process.</p>
+            <p className="mb-4 text-gray-600">{t('Please enter your email address to begin the booking process.')}</p>
             <form onSubmit={handleEmailSubmit} className="space-y-6">
                 <div className="relative">
-                    <label className="block text-gray-700 font-semibold mb-2">Email Address</label>
+                    <label className="block text-gray-700 font-semibold mb-2">{t('Email Address')}</label>
                     <div className="relative">
                         <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
                         <input
@@ -151,7 +153,7 @@ const CustomerBookAppointment = () => {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="Enter your email"
+                            placeholder={t("Enter your email")}
                         />
                     </div>
                 </div>
@@ -159,7 +161,7 @@ const CustomerBookAppointment = () => {
                     type="submit"
                     className="w-full bg-gradient-to-r from-blue-400 to-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                 >
-                    Continue
+                    {t('Continue')}
                 </button>
             </form>
         </div>
@@ -171,7 +173,7 @@ const CustomerBookAppointment = () => {
                 <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-500 text-white flex items-center justify-center flex-shrink-0">
                     <FaUser className="h-6 w-6 sm:h-8 sm:w-8" />
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 ml-4">Complete Your Profile</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 ml-4">{t('Complete Your Profile')}</h1>
             </div>
 
             <form onSubmit={handleRegistration} className="space-y-6">
@@ -179,7 +181,7 @@ const CustomerBookAppointment = () => {
                     {/* Basic Information Section */}
                     <div className="space-y-4">
                         <div className="relative">
-                            <label className="block text-gray-700 font-semibold mb-2">Name</label>
+                            <label className="block text-gray-700 font-semibold mb-2">{t('Name')}</label>
                             <div className="relative">
                                 <FaUser className="absolute left-3 top-3 text-gray-400" />
                                 <input
@@ -188,13 +190,13 @@ const CustomerBookAppointment = () => {
                                     onChange={(e) => setName(e.target.value)}
                                     required
                                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="Full Name"
+                                    placeholder={t("Full Name")}
                                 />
                             </div>
                         </div>
 
                         <div className="relative">
-                            <label className="block text-gray-700 font-semibold mb-2">Phone</label>
+                            <label className="block text-gray-700 font-semibold mb-2">{t('Phone')}</label>
                             <div className="relative">
                                 <FaPhone className="absolute left-3 top-3 text-gray-400" />
                                 <input
@@ -203,23 +205,23 @@ const CustomerBookAppointment = () => {
                                     onChange={(e) => setPhone(e.target.value)}
                                     required
                                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="Phone Number"
+                                    placeholder={t("Phone Number")}
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-gray-700 font-semibold mb-2">Gender</label>
+                            <label className="block text-gray-700 font-semibold mb-2">{t('Gender')}</label>
                             <select
                                 value={gender}
                                 onChange={(e) => setGender(e.target.value)}
                                 required
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             >
-                                <option value="">Select Gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="other">Other</option>
+                                <option value="">{t('Select Gender')}</option>
+                                <option value="male">{t('Male')}</option>
+                                <option value="female">{t('Female')}</option>
+                                <option value="other">{t('Other')}</option>
                             </select>
                         </div>
                     </div>
@@ -229,21 +231,21 @@ const CustomerBookAppointment = () => {
                         <div>
                             <label className="block text-gray-700 font-semibold mb-2">
                                 <FaRuler className="inline mr-2" />
-                                Measurements
+                                {t('Measurements')}
                             </label>
                             <div className="space-y-3">
                                 {measurementEntries.map((entry, index) => (
                                     <div key={index} className="flex flex-wrap gap-2">
                                         <input
                                             type="text"
-                                            placeholder="Type (e.g., chest, waist)"
+                                            placeholder={t("Type (e.g., chest, waist)")}
                                             value={entry.type}
                                             onChange={(e) => handleMeasurementChange(index, 'type', e.target.value)}
                                             className="flex-1 min-w-[120px] px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                         <input
                                             type="number"
-                                            placeholder="Value"
+                                            placeholder={t("Value")}
                                             value={entry.value}
                                             onChange={(e) => handleMeasurementChange(index, 'value', e.target.value)}
                                             className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -262,7 +264,7 @@ const CustomerBookAppointment = () => {
                                     onClick={addMeasurementEntry}
                                     className="flex items-center text-blue-500 hover:text-blue-600 transition-colors"
                                 >
-                                    <FaPlus className="mr-2" /> Add Measurement
+                                    <FaPlus className="mr-2" />{t('Add Measurement')}
                                 </button>
                             </div>
                         </div>
@@ -277,21 +279,21 @@ const CustomerBookAppointment = () => {
                                 onChange={(e) => setNotes(e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 rows="3"
-                                placeholder="Additional notes about your preferences"
+                                placeholder={t("Additional notes about your preferences")}
                             />
                         </div>
 
                         <div>
                             <label className="block text-gray-700 font-semibold mb-2">
                                 <FaHeart className="inline mr-2" />
-                                Style Preferences
+                                {t('Style Preferences')}
                             </label>
                             <textarea
                                 value={preferences}
                                 onChange={(e) => setPreferences(e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 rows="3"
-                                placeholder="Your style preferences"
+                                placeholder={t("Your style preferences")}
                             />
                         </div>
                     </div>
@@ -302,14 +304,14 @@ const CustomerBookAppointment = () => {
                         type="submit"
                         className="flex-1 bg-gradient-to-r from-blue-400 to-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                     >
-                        Continue to Booking
+                        {t('Continue to Booking')}
                     </button>
                     <button
                         type="button"
                         onClick={handleBack}
                         className="flex-1 bg-gradient-to-r from-gray-400 to-gray-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                     >
-                        Back
+                        {t('Back')}
                     </button>
                 </div>
             </form>
@@ -322,7 +324,7 @@ const CustomerBookAppointment = () => {
                 <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-500 text-white flex items-center justify-center flex-shrink-0">
                     <FaClock className="h-6 w-6 sm:h-8 sm:w-8" />
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 ml-4">Book Your Appointment</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 ml-4">{t('Book Your Appointment')}</h1>
             </div>
 
             <form onSubmit={handleAppointmentBooking} className="space-y-6">
@@ -331,7 +333,7 @@ const CustomerBookAppointment = () => {
                         <div>
                         <label className="block text-gray-700 font-semibold mb-2">
                                 <FaCalendar className="inline mr-2" />
-                                Appointment Date
+                                {t('Appointment Date')}
                             </label>
                             <input
                                 type="date"
@@ -345,7 +347,7 @@ const CustomerBookAppointment = () => {
                         <div>
                             <label className="block text-gray-700 font-semibold mb-2">
                                 <FaClock className="inline mr-2" />
-                                Appointment Time
+                                {t('Appointment Time')}
                             </label>
                             <input
                                 type="time"
@@ -361,7 +363,7 @@ const CustomerBookAppointment = () => {
                         <div>
                             <label className="block text-gray-700 font-semibold mb-2">
                                 <FaNotesMedical className="inline mr-2" />
-                                Service Details
+                                {t('Service Details')}
                             </label>
                             <textarea
                                 value={requestWork}
@@ -369,21 +371,21 @@ const CustomerBookAppointment = () => {
                                 required
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 rows="3"
-                                placeholder="Describe the service you need (e.g., suit alteration, dress fitting)"
+                                placeholder={t("Describe the service you need (e.g., suit alteration, dress fitting)")}
                             />
                         </div>
 
                         <div>
                             <label className="block text-gray-700 font-semibold mb-2">
                                 <FaHeart className="inline mr-2" />
-                                Additional Notes
+                                {t('Additional Notes')}
                             </label>
                             <textarea
                                 value={additionalNotes}
                                 onChange={(e) => setAdditionalNotes(e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 rows="3"
-                                placeholder="Any additional information or special requests"
+                                placeholder={t("Any additional information or special requests")}
                             />
                         </div>
                     </div>
@@ -394,14 +396,14 @@ const CustomerBookAppointment = () => {
                         type="submit"
                         className="flex-1 bg-gradient-to-r from-blue-400 to-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                     >
-                        Confirm Booking
+                        {t('Confirm Booking')}
                     </button>
                     <button
                         type="button"
                         onClick={handleBack}
                         className="flex-1 bg-gradient-to-r from-gray-400 to-gray-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                     >
-                        Back
+                        {t('Back')}
                     </button>
                 </div>
             </form>
@@ -436,7 +438,7 @@ const CustomerBookAppointment = () => {
             {loading ? (
                 <div className="bg-white rounded-xl shadow-lg p-8 text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading...</p>
+                    <p className="mt-4 text-gray-600">{t('Loading...')}</p>
                 </div>
             ) : (
                 renderStep()

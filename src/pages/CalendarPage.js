@@ -8,10 +8,12 @@ import AppointmentModal from '../components/AppointmentModal';
 import PendingAppointmentsModal from '../components/PendingAppointmentsModal'; // Import the new modal component
 import { FaCalendar, FaClock, FaUserClock } from 'react-icons/fa';
 import Spinner from '../components/Spinner';
+import { useTranslation } from 'react-i18next';
 
 const localizer = momentLocalizer(moment);
 
 const CalendarPage = () => {
+    const { t } = useTranslation();
     const { getAccessTokenSilently } = useAuth0();
     const [appointments, setAppointments] = useState([]);
     const [customers, setCustomers] = useState([]);
@@ -42,7 +44,7 @@ const CalendarPage = () => {
             setCustomers(customersResponse.data);
         } catch (error) {
             console.error('Error fetching data:', error);
-            setErrorMessage('Error fetching data: ' + (error.response?.data?.message || error.message));
+            setErrorMessage(t('Error fetching data: ') + (error.response?.data?.message || error.message));
         } finally {
             setLoading(false);
         }
@@ -57,7 +59,7 @@ const CalendarPage = () => {
             await fetchData(); // Refresh the data
         } catch (error) {
             console.error('Error confirming appointment:', error);
-            setErrorMessage('Failed to confirm appointment');
+            setErrorMessage(t('Failed to confirm appointment'));
         }
     };
 
@@ -88,8 +90,8 @@ const CalendarPage = () => {
         .filter(appointment => appointment.confirmed)
         .map(appointment => {
             const customer = customers.find(c => c.id === appointment.customer_id);
-            const customerName = customer ? customer.name : 'Unknown Customer';
-            const customerPhone = customer ? customer.phone : 'Not found';
+            const customerName = customer ? customer.name : t('Unknown Customer');
+            const customerPhone = customer ? customer.phone : t('Not found');
         
             return {
                 id: appointment.id,
@@ -109,8 +111,8 @@ const CalendarPage = () => {
         const customer = customers.find(c => c.id === appointment.customer_id);
         return {
             ...appointment,
-            customerName: customer ? customer.name : 'Unknown Customer',
-            customerPhone: customer ? customer.phone : 'Not found'
+            customerName: customer ? customer.name : t('Unknown Customer'),
+            customerPhone: customer ? customer.phone : t('Not found')
         };
     });
 
@@ -122,7 +124,7 @@ const CalendarPage = () => {
                         <FaCalendar />
                     </div>
                     <h1 className="text-4xl font-semibold text-gray-800 mt-4">
-                        Appointment Calendar
+                        {t('Appointment Calendar')}
                     </h1>
                 </div>
 
@@ -130,8 +132,8 @@ const CalendarPage = () => {
                     <div className="flex items-center space-x-4 border-l-4 border-blue-300 pl-4 py-2">
                         <FaClock className="text-blue-400 text-xl" />
                         <div>
-                            <h3 className="font-semibold text-gray-700">Total Appointments</h3>
-                            <p className="text-gray-500">{events.length} Scheduled</p>
+                            <h3 className="font-semibold text-gray-700">{t('Total Appointments')}</h3>
+                            <p className="text-gray-500">{events.length} {t('Scheduled')}</p>
                         </div>
                     </div>
                     <div 
@@ -140,8 +142,8 @@ const CalendarPage = () => {
                     >
                         <FaUserClock className="text-green-400 text-xl" />
                         <div>
-                            <h3 className="font-semibold text-gray-700">Pending Appointments</h3>
-                            <p className="text-gray-500">{pendingEvents.length} Pending</p>
+                            <h3 className="font-semibold text-gray-700">{t('Pending Appointments')}</h3>
+                            <p className="text-gray-500">{pendingEvents.length} {t('Pending')}</p>
                         </div>
                     </div>
                 </div>

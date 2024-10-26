@@ -4,8 +4,10 @@ import axiosInstance from '../axiosInstance';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import Spinner from '../components/Spinner';
 import { FaClipboardList, FaCalendarAlt, FaClock, FaCommentDots } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 const CreateAppointmentPage = () => {
+    const { t } = useTranslation();
     const { getAccessTokenSilently } = useAuth0();
     const navigate = useNavigate();
     const location = useLocation();
@@ -36,7 +38,7 @@ const CreateAppointmentPage = () => {
                 }
             } catch (error) {
                 console.error('Error fetching customers:', error);
-                setErrorMessage('Failed to load customers');
+                setErrorMessage(t('Failed to load customers'));
             } finally {
                 setCustomersLoading(false);
             }
@@ -74,7 +76,7 @@ const CreateAppointmentPage = () => {
             navigate('/calendar');
         } catch (error) {
             console.error('Error creating appointment:', error);
-            setErrorMessage('Error creating appointment: ' + (error.response?.data?.message || error.message));
+            setErrorMessage(t('Error creating appointment: ') + (error.response?.data?.message || error.message));
         } finally {
             setLoading(false);
         }
@@ -87,7 +89,7 @@ const CreateAppointmentPage = () => {
                     <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-500 text-white flex items-center justify-center flex-shrink-0">
                         <FaClipboardList className="h-6 w-6 sm:h-8 sm:w-8" />
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 ml-4">Create New Appointment</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 ml-4">{t('Create Appointment')}</h1>
                 </div>
 
                 {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>}
@@ -100,14 +102,14 @@ const CreateAppointmentPage = () => {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-4">
                             <div className="relative">
-                                <label className="block text-gray-700 font-semibold mb-2">Select Customer</label>
+                                <label className="block text-gray-700 font-semibold mb-2">{t('Select Customer')}</label>
                                 <select
                                     value={selectedCustomer}
                                     onChange={(e) => setSelectedCustomer(e.target.value)}
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     required
                                 >
-                                    <option value="">-- Select a customer --</option>
+                                    <option value="">-- {t('Select a customer')} --</option>
                                     {customers.map((customer) => (
                                         <option key={customer.id} value={customer.id}>
                                             {customer.name} ({customer.email})
@@ -117,7 +119,7 @@ const CreateAppointmentPage = () => {
                             </div>
 
                             <div className="relative">
-                                <label className="block text-gray-700 font-semibold mb-2">Appointment Date</label>
+                                <label className="block text-gray-700 font-semibold mb-2">{t('Appointment Date')}</label>
                                 <div className="relative">
                                     <FaCalendarAlt className="absolute left-3 top-3 text-gray-400" />
                                     <input
@@ -131,7 +133,7 @@ const CreateAppointmentPage = () => {
                             </div>
 
                             <div className="relative">
-                                <label className="block text-gray-700 font-semibold mb-2">Appointment Time</label>
+                                <label className="block text-gray-700 font-semibold mb-2">{t('Appointment Time')}</label>
                                 <div className="relative">
                                     <FaClock className="absolute left-3 top-3 text-gray-400" />
                                     <input
@@ -145,7 +147,7 @@ const CreateAppointmentPage = () => {
                             </div>
 
                             <div className="relative">
-                                <label className="block text-gray-700 font-semibold mb-2">Request Work</label>
+                                <label className="block text-gray-700 font-semibold mb-2">{t('Request Work')}</label>
                                 <div className="relative">
                                     <FaCommentDots className="absolute left-3 top-3 text-gray-400" />
                                     <textarea
@@ -158,7 +160,7 @@ const CreateAppointmentPage = () => {
                             </div>
 
                             <div className="relative">
-                                <label className="block text-gray-700 font-semibold mb-2">Additional Notes</label>
+                                <label className="block text-gray-700 font-semibold mb-2">{t('Additional Notes')}</label>
                                 <textarea
                                     value={additionalNotes}
                                     onChange={(e) => setAdditionalNotes(e.target.value)}
@@ -177,17 +179,17 @@ const CreateAppointmentPage = () => {
                                 {loading ? (
                                     <div className="flex items-center justify-center">
                                         <Spinner />
-                                        <span className="ml-2">Creating...</span>
+                                        <span className="ml-2">{t('Creating...')}</span>
                                     </div>
                                 ) : (
-                                    'Create Appointment'
+                                    t('Create Appointment')
                                 )}
                             </button>
                             <Link
                                 to="/calendar"
                                 className="flex-1 bg-gradient-to-r from-gray-400 to-gray-500 font-semibold text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-center flex items-center justify-center"
                             >
-                                Back to Calendar
+                                {t('Back to Calendar')}
                             </Link>
                         </div>
                     </form>

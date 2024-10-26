@@ -4,8 +4,10 @@ import { useAuth0 } from '@auth0/auth0-react';
 import axiosInstance from '../axiosInstance';
 import Spinner from '../components/Spinner';
 import { FaEnvelope, FaPhone, FaVenusMars, FaRuler, FaInfoCircle } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 const CustomerDetailPage = () => {
+    const { t } = useTranslation();
     const { customerId } = useParams();
     const [customer, setCustomer] = useState(null);
     const { getAccessTokenSilently } = useAuth0();
@@ -77,8 +79,8 @@ const CustomerDetailPage = () => {
                     <div className="flex items-start space-x-4 border-l-4 border-indigo-300 pl-4">
                         <FaInfoCircle className="text-indigo-400 text-xl mt-1" />
                         <div className="text-gray-500 text-sm items-start">
-                            <p style={{textAlign: 'left'}}>{customer.additional_info?.notes || 'No notes'}</p>
-                            <p style={{textAlign: 'left'}}className="mt-1">{customer.additional_info?.preferences || 'No preferences'}</p>
+                            <p style={{textAlign: 'left'}}>{customer.additional_info?.notes || t('No notes')}</p>
+                            <p style={{textAlign: 'left'}}className="mt-1">{customer.additional_info?.preferences || t('No preferences')}</p>
                         </div>
                     </div>
                 </div>
@@ -88,13 +90,13 @@ const CustomerDetailPage = () => {
                         onClick={() => navigate(-1)}
                         className="flex-1 bg-gradient-to-r from-blue-400 to-blue-500 text-white font-semibold py-3 px-5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-center"
                     >
-                        Back to Customers
+                        {t('Back to Customers')}
                     </button>
                     <button
                         onClick={() => navigate(`/appointments/new?customerId=${customer.id}`)}
                         className="flex-1 bg-gradient-to-r from-green-400 to-green-500 text-white font-semibold py-3 px-5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-center"
                     >
-                        New Appointment
+                        {t('New Appointment')}
                     </button>
                 </div>
             </div>

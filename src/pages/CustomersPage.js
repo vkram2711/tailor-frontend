@@ -5,8 +5,10 @@ import axiosInstance from '../axiosInstance';
 import CustomerList from '../components/CustomerList';
 import { FaUserPlus, FaUsers } from 'react-icons/fa';
 import Spinner from '../components/Spinner';
+import { useTranslation } from 'react-i18next';
 
 const CustomersPage = () => {
+    const { t } = useTranslation();
     const [customers, setCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
     const { getAccessTokenSilently } = useAuth0();
@@ -22,7 +24,7 @@ const CustomersPage = () => {
                 });
                 setCustomers(response.data);
             } catch (error) {
-                console.error('Error fetching customers:', error);
+                console.error(t('Error fetching customers:'), error);
             } finally {
                 setLoading(false);
             }
@@ -36,7 +38,7 @@ const CustomersPage = () => {
             <div className="flex flex-col sm:flex-row items-center justify-between mb-6 border-b pb-4">
                 <div className="flex items-center mb-4 sm:mb-0">
                     <FaUsers className="text-4xl text-gray-800 mr-4" />
-                    <h1 className="text-3xl font-semibold text-gray-800">Customers</h1>
+                    <h1 className="text-3xl font-semibold text-gray-800">{t('Customers')}</h1>
                 </div>
                 <div className="flex items-center space-x-4">
                     <Link
@@ -44,7 +46,7 @@ const CustomersPage = () => {
                         className="inline-flex items-center bg-gradient-to-r from-blue-400 to-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                     >
                         <FaUserPlus className="mr-2" />
-                        Add Customer
+                        {t('Add Customer')}
                     </Link>
                 </div>
             </div>

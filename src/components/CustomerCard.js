@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaEnvelope, FaPhone } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 const CustomerCard = ({ customer }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-gray-50 shadow-lg transition-transform transform-gpu duration-300 ease-in-out">
       <div className="flex flex-col sm:flex-row items-center mb-4">
@@ -26,13 +29,13 @@ const CustomerCard = ({ customer }) => {
           to={`/customers/${customer.id}`} 
           className="flex-1 bg-gradient-to-r from-blue-400 to-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-center"
         >
-          View Details
+          {t('View Details')}
         </Link>
         <Link
           to={`/appointments/new?customerId=${customer.id}`}
           className="flex-1 bg-gradient-to-r from-green-400 to-green-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-center"
         >
-          New Appointment
+          {t('New Appointment')}
         </Link>
       </div>
     </div>

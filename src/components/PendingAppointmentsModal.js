@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { FaClipboardList, FaClock, FaPhone } from 'react-icons/fa';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'; 
+import { useTranslation } from 'react-i18next';
 
 const PendingAppointmentsModal = ({ appointments, onConfirm, onClose }) => {
     const [loadingId, setLoadingId] = useState(null);
+    const { t } = useTranslation();
 
     if (!appointments.length) {
-        return <p className="text-center text-gray-500">No pending appointments</p>;
+        return <p className="text-center text-gray-500">{t("No pending appointments")}</p>;
     }
 
     const handleConfirm = async (appointmentId) => {
@@ -22,7 +24,7 @@ const PendingAppointmentsModal = ({ appointments, onConfirm, onClose }) => {
                     <div className="h-16 w-16 rounded-full bg-green-500 text-white flex items-center justify-center font-bold text-2xl mx-auto shadow-md">
                         <FaClipboardList />
                     </div>
-                    <h3 className="text-3xl font-semibold text-gray-800 mt-4">Pending Appointments</h3>
+                    <h3 className="text-3xl font-semibold text-gray-800 mt-4">{t("Pending Appointments")}</h3>
                 </div>
 
                 <div className="overflow-y-auto max-h-[60vh]">
@@ -32,7 +34,7 @@ const PendingAppointmentsModal = ({ appointments, onConfirm, onClose }) => {
                                 <div className="flex items-center space-x-3 border-l-4 border-blue-300 pl-4">
                                     <FaClock className="text-blue-400" />
                                     <div>
-                                        <p className="font-semibold text-gray-700">Date</p>
+                                        <p className="font-semibold text-gray-700">{t("Date")}</p>
                                         <p className="text-gray-600">
                                             {new Date(appointment.date).toLocaleString()}
                                         </p>
@@ -47,7 +49,7 @@ const PendingAppointmentsModal = ({ appointments, onConfirm, onClose }) => {
                                 </div>
                             </div>
                             <div className="mt-4 border-l-4 border-purple-300 pl-4">
-                                <p className="font-semibold text-gray-700">Request</p>
+                                <p className="font-semibold text-gray-700">{t("Request")}</p>
                                 <p className="text-gray-600">{appointment.request_work}</p>
                             </div>
                             <div className="mt-4 flex justify-end">
@@ -59,7 +61,7 @@ const PendingAppointmentsModal = ({ appointments, onConfirm, onClose }) => {
                                     {loadingId === appointment.id ? (
                                         <AiOutlineLoading3Quarters className="animate-spin h-5 w-5 inline-block" />
                                     ) : (
-                                        'Confirm Appointment'
+                                        t('Confirm Appointment')
                                     )}
                                 </button>
                             </div>
@@ -72,7 +74,7 @@ const PendingAppointmentsModal = ({ appointments, onConfirm, onClose }) => {
                         onClick={onClose}
                         className="px-6 py-2 bg-gradient-to-r from-red-400 to-red-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                     >
-                        Close
+                        {t('Close')}
                     </button>
                 </div>
             </div>

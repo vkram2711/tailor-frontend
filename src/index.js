@@ -4,6 +4,7 @@ import { Auth0Provider } from '@auth0/auth0-react';
 import App from './App';
 import authConfig from './auth_config.json';
 import './index.css';
+import './static/i18n';
 
 ReactDOM.render(
   <Auth0Provider

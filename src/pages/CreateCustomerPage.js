@@ -3,8 +3,10 @@ import { useAuth0 } from '@auth0/auth0-react';
 import axiosInstance from '../axiosInstance';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaUser, FaEnvelope, FaPhone, FaRuler, FaNotesMedical, FaHeart, FaPlus, FaTrash } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 const CreateCustomerPage = () => {
+    const { t } = useTranslation();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -60,7 +62,7 @@ const CreateCustomerPage = () => {
             });
             navigate('/customers');
         } catch (error) {
-            console.error('Error creating customer:', error);
+            console.error(t('Error creating customer:'), error);
         }
     };
 
@@ -71,7 +73,7 @@ const CreateCustomerPage = () => {
                     <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-500 text-white flex items-center justify-center flex-shrink-0">
                         <FaUser className="h-6 w-6 sm:h-8 sm:w-8" />
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 ml-4">Create New Customer</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 ml-4">{t('Create New Customer')}</h1>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -79,7 +81,7 @@ const CreateCustomerPage = () => {
                         {/* Basic Information Section */}
                         <div className="space-y-4">
                             <div className="relative">
-                                <label className="block text-gray-700 font-semibold mb-2">Name</label>
+                                <label className="block text-gray-700 font-semibold mb-2">{t('Name')}</label>
                                 <div className="relative">
                                     <FaUser className="absolute left-3 top-3 text-gray-400" />
                                     <input
@@ -88,13 +90,13 @@ const CreateCustomerPage = () => {
                                         onChange={(e) => setName(e.target.value)}
                                         required
                                         className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Full Name"
+                                        placeholder={t("Full Name")}
                                     />
                                 </div>
                             </div>
 
                             <div className="relative">
-                                <label className="block text-gray-700 font-semibold mb-2">Email</label>
+                                <label className="block text-gray-700 font-semibold mb-2">{t('Email')}</label>
                                 <div className="relative">
                                     <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
                                     <input
@@ -103,13 +105,13 @@ const CreateCustomerPage = () => {
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
                                         className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Email Address"
+                                        placeholder={t("Email Address")}
                                     />
                                 </div>
                             </div>
 
                             <div className="relative">
-                                <label className="block text-gray-700 font-semibold mb-2">Phone</label>
+                                <label className="block text-gray-700 font-semibold mb-2">{t('Phone')}</label>
                                 <div className="relative">
                                     <FaPhone className="absolute left-3 top-3 text-gray-400" />
                                     <input
@@ -118,23 +120,23 @@ const CreateCustomerPage = () => {
                                         onChange={(e) => setPhone(e.target.value)}
                                         required
                                         className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Phone Number"
+                                        placeholder={t("Phone Number")}
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-gray-700 font-semibold mb-2">Gender</label>
+                                <label className="block text-gray-700 font-semibold mb-2">{t('Gender')}</label>
                                 <select
                                     value={gender}
                                     onChange={(e) => setGender(e.target.value)}
                                     required
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 >
-                                    <option value="">Select Gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
+                                    <option value="">{t('Select Gender')}</option>
+                                    <option value="male">{t('Male')}</option>
+                                    <option value="female">{t('Female')}</option>
+                                    <option value="other">{t('Other')}</option>
                                 </select>
                             </div>
                         </div>
@@ -144,21 +146,21 @@ const CreateCustomerPage = () => {
                             <div>
                                 <label className="block text-gray-700 font-semibold mb-2">
                                     <FaRuler className="inline mr-2" />
-                                    Measurements
+                                    {t('Measurements')}
                                 </label>
                                 <div className="space-y-3">
                                     {measurementEntries.map((entry, index) => (
                                         <div key={index} className="flex flex-wrap gap-2">
                                             <input
                                                 type="text"
-                                                placeholder="Type (e.g., chest, waist)"
+                                                placeholder={t("Type (e.g., chest, waist)")}
                                                 value={entry.type}
                                                 onChange={(e) => handleMeasurementChange(index, 'type', e.target.value)}
                                                 className="flex-1 min-w-[120px] px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             />
                                             <input
                                                 type="number"
-                                                placeholder="Value"
+                                                placeholder={t("Value")}
                                                 value={entry.value}
                                                 onChange={(e) => handleMeasurementChange(index, 'value', e.target.value)}
                                                 className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -177,7 +179,7 @@ const CreateCustomerPage = () => {
                                         onClick={addMeasurementEntry}
                                         className="flex items-center text-blue-500 hover:text-blue-600 transition-colors"
                                     >
-                                        <FaPlus className="mr-2" /> Add Measurement
+                                        <FaPlus className="mr-2" /> {t('Add Measurement')}
                                     </button>
                                 </div>
                             </div>
@@ -185,28 +187,28 @@ const CreateCustomerPage = () => {
                             <div>
                                 <label className="block text-gray-700 font-semibold mb-2">
                                     <FaNotesMedical className="inline mr-2" />
-                                    Notes
+                                    {t('Notes')}
                                 </label>
                                 <textarea
                                     value={notes}
                                     onChange={(e) => setNotes(e.target.value)}
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     rows="3"
-                                    placeholder="Additional notes about the customer"
+                                    placeholder={t("Additional notes about the customer")}
                                 />
                             </div>
 
                             <div>
                                 <label className="block text-gray-700 font-semibold mb-2">
                                     <FaHeart className="inline mr-2" />
-                                    Preferences
+                                    {t('Preferences')}
                                 </label>
                                 <textarea
                                     value={preferences}
                                     onChange={(e) => setPreferences(e.target.value)}
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     rows="3"
-                                    placeholder="Customer preferences"
+                                    placeholder={t("Customer preferences")}
                                 />
                             </div>
                         </div>
@@ -217,13 +219,13 @@ const CreateCustomerPage = () => {
                             type="submit"
                             className="flex-1 bg-gradient-to-r from-blue-400 to-blue-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                         >
-                            Create Customer
+                            {t('Create Customer')}
                         </button>
                         <Link
                             to="/customers"
                             className="flex-1 bg-gradient-to-r from-gray-400 to-gray-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-center"
                         >
-                            Cancel
+                            {t('Cancel')}
                         </Link>
                     </div>
                 </form>

@@ -1,7 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginButton from './components/LoginButton';
-import SignupButton from './components/SignUpButton';
 import CustomersPage from './pages/CustomersPage';
 import CustomerDetailPage from './pages/CustomerDetailPage';
 import CreateCustomerPage from './pages/CreateCustomerPage';
