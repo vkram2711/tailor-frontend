@@ -31,6 +31,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.post("/api/public/customers")
+async def create_customer_public(customer: Customer):
+    customer_dict = customer.to_mongo()
+    existing_customer = await customers_collection.find_one({"email": customer.email, "tailor_id": customer.tailor_id})
+    if existing_customer:
+        raise HTTPException(status_code=400, detail="Customer already exists")
+    await customers_collection.insert_one(customer_dict)
+    return {"message": "Customer created successfully", "id": str(customer_dict["_id"])}
+
 
 @app.post("/api/customers")
 async def create_customer(customer: Customer, user: dict = Depends(get_current_user)):
