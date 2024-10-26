@@ -9,15 +9,15 @@ import CreateAppointmentPage from './pages/CreateAppointmentPage';
 import CalendarPage from './pages/CalendarPage';
 import CustomerBookAppointment from './pages/CustomerBookAppointment';
 import ThankYouPage from './pages/ThankYouPage';
-import Menu from './components/Menu'
+import Menu from './components/Menu';
 
 const App = () => {
   return (
     <Router>
-      <div className="w-full">
-        <div className="">
-          <Menu /> 
-          <div className="text-center bg-white p-8 shadow-md rounded-lg">
+      <div className="flex flex-col min-h-screen">
+        <Menu />
+        <main className="flex-grow bg-gradient-to-br from-blue-50 to-gray-50">
+          <div className="container mx-auto px-4 pt-16 pb-8 min-h-[calc(100vh-64px)]">
             <Routes>
               <Route path="/customers/new" element={<CreateCustomerPage />} />
               <Route path="/customers/:customerId" element={<CustomerDetailPage />} />
@@ -29,7 +29,7 @@ const App = () => {
               <Route path="/thank-you" element={<ThankYouPage />} />
             </Routes>
           </div>
-        </div>
+        </main>
       </div>
     </Router>
   );

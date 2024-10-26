@@ -4,8 +4,6 @@ import { Auth0Provider } from '@auth0/auth0-react';
 import App from './App';
 import authConfig from './auth_config.json';
 import './index.css';
-import { ThemeProvider } from './context/ThemeContext';
-import { themes } from './context/theme';
 
 ReactDOM.render(
   <Auth0Provider
@@ -16,9 +14,7 @@ ReactDOM.render(
       audience: authConfig.audience
     }}
   >
-    <ThemeProvider theme={themes.light}>
-      <App />
-    </ThemeProvider>
+    <App />
   </Auth0Provider>,
   document.getElementById('root')
 );

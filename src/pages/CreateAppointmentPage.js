@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import axiosInstance from '../axiosInstance';
-import { useNavigate, useLocation } from 'react-router-dom'; 
-import { useTheme } from '../context/ThemeContext';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import Spinner from '../components/Spinner';
+import { FaClipboardList, FaCalendarAlt, FaClock, FaCommentDots } from 'react-icons/fa';
 
 const CreateAppointmentPage = () => {
     const { getAccessTokenSilently } = useAuth0();
     const navigate = useNavigate();
-    const { isDarkMode } = useTheme();
     const location = useLocation();
 
     const [customers, setCustomers] = useState([]);
@@ -23,7 +23,6 @@ const CreateAppointmentPage = () => {
     const queryParams = new URLSearchParams(location.search);
     const preSelectedCustomerId = queryParams.get('customerId');
 
-    // Fetch customers and handle pre-selected customer
     useEffect(() => {
         const fetchCustomers = async () => {
             try {
@@ -39,7 +38,7 @@ const CreateAppointmentPage = () => {
                 console.error('Error fetching customers:', error);
                 setErrorMessage('Failed to load customers');
             } finally {
-                setCustomersLoading(false); // Once data is fetched, turn off loading
+                setCustomersLoading(false);
             }
         };
 
@@ -66,6 +65,7 @@ const CreateAppointmentPage = () => {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
+            // Reset the form
             setSelectedCustomer('');
             setAppointmentDate('');
             setAppointmentTime('');
@@ -81,83 +81,118 @@ const CreateAppointmentPage = () => {
     };
 
     return (
-        <div className={`max-w-md mx-auto p-6 shadow-lg rounded-lg mt-12 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <h1 className={`text-2xl font-bold mb-6 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>Create New Appointment</h1>
-            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-            
-            {customersLoading ? (
-                <div className="flex justify-center items-center h-64">
-                    {/* Tailwind Spinner */}
-                    <svg className="animate-spin h-12 w-12 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.963 7.963 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+        <div className="max-w-2xl mx-auto p-4 sm:p-8">
+            <div className="bg-gradient-to-br from-blue-50 to-gray-50 rounded-xl shadow-lg p-4 sm:p-8">
+                <div className="flex items-center mb-8">
+                    <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-500 text-white flex items-center justify-center flex-shrink-0">
+                        <FaClipboardList className="h-6 w-6 sm:h-8 sm:w-8" />
+                    </div>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 ml-4">Create New Appointment</h1>
                 </div>
-            ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-left text-gray-700">Select Customer:</label>
-                        <select
-                            value={selectedCustomer}
-                            onChange={(e) => setSelectedCustomer(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded"
-                            required
-                        >
-                            <option value="">-- Select a customer --</option>
-                            {customers.map((customer) => (
-                                <option key={customer.id} value={customer.id}>
-                                    {customer.name} ({customer.email})
-                                </option>
-                            ))}
-                        </select>
+
+                {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>}
+
+                {customersLoading ? (
+                    <div className="flex justify-center items-center h-64">
+                        <Spinner />
                     </div>
-                    <div>
-                        <label className="block text-left text-gray-700">Appointment Date:</label>
-                        <input
-                            type="date"
-                            value={appointmentDate}
-                            onChange={(e) => setAppointmentDate(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-left text-gray-700">Appointment Time:</label>
-                        <input
-                            type="time"
-                            value={appointmentTime}
-                            onChange={(e) => setAppointmentTime(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-left text-gray-700">Request Work:</label>
-                        <textarea
-                            value={requestWork}
-                            onChange={(e) => setRequestWork(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded"
-                            rows={3}
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-left text-gray-700">Additional Notes:</label>
-                        <textarea
-                            value={additionalNotes}
-                            onChange={(e) => setAdditionalNotes(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded"
-                            rows={3}
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-                        disabled={loading}
-                    >
-                        {loading ? 'Creating...' : 'Create Appointment'}
-                    </button>
-                </form>
-            )}
+                ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="space-y-4">
+                            <div className="relative">
+                                <label className="block text-gray-700 font-semibold mb-2">Select Customer</label>
+                                <select
+                                    value={selectedCustomer}
+                                    onChange={(e) => setSelectedCustomer(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    required
+                                >
+                                    <option value="">-- Select a customer --</option>
+                                    {customers.map((customer) => (
+                                        <option key={customer.id} value={customer.id}>
+                                            {customer.name} ({customer.email})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="relative">
+                                <label className="block text-gray-700 font-semibold mb-2">Appointment Date</label>
+                                <div className="relative">
+                                    <FaCalendarAlt className="absolute left-3 top-3 text-gray-400" />
+                                    <input
+                                        type="date"
+                                        value={appointmentDate}
+                                        onChange={(e) => setAppointmentDate(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="relative">
+                                <label className="block text-gray-700 font-semibold mb-2">Appointment Time</label>
+                                <div className="relative">
+                                    <FaClock className="absolute left-3 top-3 text-gray-400" />
+                                    <input
+                                        type="time"
+                                        value={appointmentTime}
+                                        onChange={(e) => setAppointmentTime(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="relative">
+                                <label className="block text-gray-700 font-semibold mb-2">Request Work</label>
+                                <div className="relative">
+                                    <FaCommentDots className="absolute left-3 top-3 text-gray-400" />
+                                    <textarea
+                                        value={requestWork}
+                                        onChange={(e) => setRequestWork(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        rows={3}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="relative">
+                                <label className="block text-gray-700 font-semibold mb-2">Additional Notes</label>
+                                <textarea
+                                    value={additionalNotes}
+                                    onChange={(e) => setAdditionalNotes(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    rows={3}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mt-8">
+                            <button
+                                type="submit"
+                                className={`flex-1 py-3 px-4 rounded-lg shadow-md font-semibold transition-all duration-300 ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-blue-400 to-blue-500 text-white hover:shadow-lg'}`}
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <div className="flex items-center justify-center">
+                                        <Spinner />
+                                        <span className="ml-2">Creating...</span>
+                                    </div>
+                                ) : (
+                                    'Create Appointment'
+                                )}
+                            </button>
+                            <Link
+                                to="/calendar"
+                                className="flex-1 bg-gradient-to-r from-gray-400 to-gray-500 font-semibold text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-center flex items-center justify-center"
+                            >
+                                Back to Calendar
+                            </Link>
+                        </div>
+                    </form>
+                )}
+            </div>
         </div>
     );
 };
