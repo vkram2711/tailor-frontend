@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
 import axiosInstance from '../axiosInstance';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaUser, FaEnvelope, FaPhone, FaRuler, FaNotesMedical, FaHeart, FaPlus, FaTrash } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import {useAuth} from "../AuthProvider";
 
 const CreateCustomerPage = () => {
     const { t } = useTranslation();
@@ -14,7 +14,7 @@ const CreateCustomerPage = () => {
     const [measurementEntries, setMeasurementEntries] = useState([{ type: '', value: 0 }]);
     const [notes, setNotes] = useState('');
     const [preferences, setPreferences] = useState('');
-    const { getAccessTokenSilently } = useAuth0();
+    const { getAccessTokenSilently } = useAuth();
     const navigate = useNavigate();
 
     const handleMeasurementChange = (index, field, value) => {

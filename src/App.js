@@ -8,10 +8,10 @@ import CalendarPage from './pages/CalendarPage';
 import CustomerBookAppointment from './pages/CustomerBookAppointment';
 import ThankYouPage from './pages/ThankYouPage';
 import Menu from './components/Menu';
+import Callback from "./Callback";
 
 const App = () => {
   return (
-    <Router>
       <div className="flex flex-col min-h-screen">
         <Menu />
         <main className="flex-grow bg-gradient-to-br from-blue-50 to-gray-50">
@@ -25,11 +25,11 @@ const App = () => {
               <Route path="/" exact element={<CustomersPage />} />
               <Route path="/book-appointment/:tailorId" element={<CustomerBookAppointment />} />
               <Route path="/thank-you" element={<ThankYouPage />} />
+              <Route path="/callback" element={<Callback/>}  />
             </Routes>
           </div>
         </main>
       </div>
-    </Router>
   );
 };
 

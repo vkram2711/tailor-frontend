@@ -1,21 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Auth0Provider } from '@auth0/auth0-react';
+import { BrowserRouter as Router} from 'react-router-dom';
 import App from './App';
-import authConfig from './auth_config.json';
 import './index.css';
 import './static/i18n';
+import {AuthProvider} from "./AuthProvider";
 
 ReactDOM.render(
-  <Auth0Provider
-    domain={authConfig.domain}
-    clientId={authConfig.clientId}
-    authorizationParams={{
-      redirect_uri: window.location.origin,
-      audience: authConfig.audience
-    }}
-  >
-    <App />
-  </Auth0Provider>,
-  document.getElementById('root')
+    <Router>
+        <AuthProvider>
+            <App/>
+        </AuthProvider>
+    </Router>,
+    document.getElementById('root')
 );

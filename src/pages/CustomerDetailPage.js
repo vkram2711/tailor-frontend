@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
 import axiosInstance from '../axiosInstance';
 import Spinner from '../components/Spinner';
 import { FaEnvelope, FaPhone, FaVenusMars, FaRuler, FaInfoCircle } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import {useAuth} from "../AuthProvider";
 
 const CustomerDetailPage = () => {
     const { t } = useTranslation();
     const { customerId } = useParams();
     const [customer, setCustomer] = useState(null);
-    const { getAccessTokenSilently } = useAuth0();
+    const { getAccessTokenSilently } = useAuth();
     const navigate = useNavigate();
     const capitalize = (text) => text && text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 

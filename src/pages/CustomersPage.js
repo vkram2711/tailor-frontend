@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
 import axiosInstance from '../axiosInstance';
 import CustomerList from '../components/CustomerList';
 import { FaUserPlus, FaUsers } from 'react-icons/fa';
 import Spinner from '../components/Spinner';
 import { useTranslation } from 'react-i18next';
+import {useAuth} from "../AuthProvider";
 
 const CustomersPage = () => {
     const { t } = useTranslation();
     const [customers, setCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { getAccessTokenSilently } = useAuth0();
+    const { getAccessTokenSilently } = useAuth();
 
     useEffect(() => {
         const fetchCustomers = async () => {

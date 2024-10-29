@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
 import axiosInstance from '../axiosInstance';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import Spinner from '../components/Spinner';
 import { FaClipboardList, FaCalendarAlt, FaClock, FaCommentDots } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import {useAuth} from "../AuthProvider";
 
 const CreateAppointmentPage = () => {
     const { t } = useTranslation();
-    const { getAccessTokenSilently } = useAuth0();
+    const { getAccessTokenSilently } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 

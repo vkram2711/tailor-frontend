@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
 import axiosInstance from '../axiosInstance';
 import { 
   FaBars, 
@@ -12,10 +11,11 @@ import {
   FaLanguage
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import {useAuth} from "../AuthProvider";
 
 const Menu = () => {
   const { t, i18n } = useTranslation();
-  const { isAuthenticated, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, logout, } = useAuth();
   const [tailorId, setTailorId] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -23,7 +23,7 @@ const Menu = () => {
     const fetchTailorId = async () => {
       if (isAuthenticated) {
         try {
-          const token = await getAccessTokenSilently();
+          const token = sessionStorage.getItem("authToken");
           const response = await axiosInstance.get('/api/tailor/id', {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -37,7 +37,7 @@ const Menu = () => {
     };
 
     fetchTailorId();
-  }, [isAuthenticated, getAccessTokenSilently]);
+  }, [isAuthenticated]);
 
   // Close menu when clicking outside
   useEffect(() => {

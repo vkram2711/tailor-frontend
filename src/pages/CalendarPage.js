@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -9,12 +8,13 @@ import PendingAppointmentsModal from '../components/PendingAppointmentsModal'; /
 import { FaCalendar, FaClock, FaUserClock } from 'react-icons/fa';
 import Spinner from '../components/Spinner';
 import { useTranslation } from 'react-i18next';
+import {useAuth} from "../AuthProvider";
 
 const localizer = momentLocalizer(moment);
 
 const CalendarPage = () => {
     const { t } = useTranslation();
-    const { getAccessTokenSilently } = useAuth0();
+    const { getAccessTokenSilently } = useAuth();
     const [appointments, setAppointments] = useState([]);
     const [customers, setCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
