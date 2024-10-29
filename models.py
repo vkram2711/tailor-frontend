@@ -56,7 +56,7 @@ class Appointment(MongoModel):
     tailor_id: Optional[str] = None
 
 
-class TailorProfile:
+class TailorProfile(BaseModel):
     name: str
     email: Optional[str]
     phone: str
