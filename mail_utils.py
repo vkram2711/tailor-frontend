@@ -1,5 +1,5 @@
 from fastapi_mail import ConnectionConfig, MessageSchema, FastMail
-from pydantic import  EmailStr
+from pydantic import EmailStr
 
 from models import Appointment
 
@@ -15,19 +15,18 @@ email_config = ConnectionConfig(
     VALIDATE_CERTS=True
 )
 
+
 def format_appointment_details(appointment: Appointment):
     details = f"""
     <p>Customer ID: {appointment.customer_id}</p>
     <p>Request Work: {appointment.request_work}</p>
     <p>Additional Notes: {appointment.additional_notes}</p>
     <p>Date: {appointment.date.strftime('%Y-%m-%d %H:%M:%S')}</p>
-    <p>Confirmed: {appointment.confirmed}</p>
     """
-    if appointment.additional_info:
+    if appointment.additional_notes:
         details += f"""
         <h3>Additional Info</h3>
-        <p>Notes: {appointment.additional_info.notes}</p>
-        <p>Preferences: {appointment.additional_info.preferences}</p>
+        <p>Notes: {appointment.additional_notes:}</p>
         """
     return details
 

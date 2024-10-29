@@ -7,7 +7,7 @@ from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 
-from auth0_utils import get_current_user, AUTH0_DOMAIN, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, API_IDENTIFIER
+from auth0_utils import get_current_user, AUTH0_DOMAIN, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, API_IDENTIFIER, get_tailor_metadata
 from mail_utils import send_confirmation_email, send_reschedule_email, send_deletion_email
 from models import Customer, Measurement, Appointment
 from mongo_utils import customers_collection, appointments_collection
@@ -247,11 +247,12 @@ async def reschedule_appointment(appointment_id: str, new_date: datetime, backgr
     if customer:
         appointment = Appointment.from_mongo(existing_appointment)
         appointment.date = new_date
+        full_name, address, phone_number, email = get_tailor_metadata(user["sub"])
         tailor_info = {
-            "name": user["name"],
-            "email": user["email"],
-            "address": user.get("address", "N/A"),
-            "phone": user.get("phone", "N/A")
+            "name": full_name,
+            "email": email,
+            "address": address,
+            "phone": phone_number
         }
         background_tasks.add_task(send_reschedule_email, customer["email"], appointment, new_date.isoformat(), tailor_info)
 
@@ -274,11 +275,12 @@ async def confirm_appointment(appointment_id: str, background_tasks: BackgroundT
     customer = await customers_collection.find_one({"_id": ObjectId(existing_appointment["customer_id"])})
     if customer:
         appointment = Appointment.from_mongo(existing_appointment)
+        full_name, address, phone_number, email = get_tailor_metadata(user["sub"])
         tailor_info = {
-            "name": user["name"],
-            "email": user["email"],
-            "address": user.get("address", "N/A"),
-            "phone": user.get("phone", "N/A")
+            "name": full_name,
+            "email": email,
+            "address": address,
+            "phone": phone_number
         }
         background_tasks.add_task(send_confirmation_email, customer["email"], appointment, tailor_info)
 
@@ -298,11 +300,12 @@ async def delete_appointment(appointment_id: str, background_tasks: BackgroundTa
     customer = await customers_collection.find_one({"_id": ObjectId(existing_appointment["customer_id"])})
     if customer:
         appointment = Appointment.from_mongo(existing_appointment)
+        full_name, address, phone_number, email = get_tailor_metadata(user["sub"])
         tailor_info = {
-            "name": user["name"],
-            "email": user["email"],
-            "address": user.get("address", "N/A"),
-            "phone": user.get("phone", "N/A")
+            "name": full_name,
+            "email": email,
+            "address": address,
+            "phone": phone_number
         }
         background_tasks.add_task(send_deletion_email, customer["email"], appointment, tailor_info)
 

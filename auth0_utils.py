@@ -41,12 +41,13 @@ def update_tailor_metadata(user_id, full_name, address, phone_number):
 
 
 def get_tailor_metadata(user_id):
-    user = auth0.users.get(user_id)
+    user = auth0.users.get(f"auth0|{user_id}")
     metadata = user.get("user_metadata", {})
+    email = user["email"]
     full_name = metadata.get("full_name")
     address = metadata.get("address")
     phone_number = metadata.get("phone_number")
-    return full_name, address, phone_number
+    return full_name, address, phone_number, email
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
