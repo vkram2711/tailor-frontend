@@ -1,11 +1,13 @@
 from datetime import datetime
 from uuid import uuid4
 
+import requests
 from bson import ObjectId
-from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks
+from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import RedirectResponse
 
-from auth0 import get_current_user
+from auth0_utils import get_current_user, AUTH0_DOMAIN, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, API_IDENTIFIER
 from mail_utils import send_confirmation_email, send_reschedule_email, send_deletion_email
 from models import Customer, Measurement, Appointment
 from mongo_utils import customers_collection, appointments_collection
@@ -30,6 +32,41 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/login")
+def login():
+    return RedirectResponse(
+        f"https://{AUTH0_DOMAIN}/authorize?client_id={CLIENT_ID}"
+        f"&response_type=code&redirect_uri={REDIRECT_URI}&scope=openid profile email&audience={API_IDENTIFIER}"
+    )
+
+
+@app.get("/callback")
+async def callback(request: Request):
+    code = request.query_params.get("code")
+    if code is None:
+        raise HTTPException(status_code=400, detail="Authorization code not found")
+
+    # Exchange code for tokens
+    token_url = f"https://{AUTH0_DOMAIN}/oauth/token"
+    payload = {
+        "grant_type": "authorization_code",
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET,
+        "code": code,
+        "redirect_uri": REDIRECT_URI,
+    }
+    token_response = requests.post(token_url, json=payload)
+    tokens = token_response.json()
+    access_token = tokens.get("access_token")
+
+    if not access_token:
+        raise HTTPException(status_code=400, detail="Access token not found")
+
+    frontend_url = f"http://localhost:3000/callback?token={access_token}"
+    return RedirectResponse(frontend_url)
+
 
 @app.post("/api/public/customers")
 async def create_customer_public(customer: Customer):
@@ -208,7 +245,15 @@ async def reschedule_appointment(appointment_id: str, new_date: datetime, backgr
     # Send reschedule email to customer
     customer = await customers_collection.find_one({"_id": ObjectId(existing_appointment["customer_id"])})
     if customer:
-        background_tasks.add_task(send_reschedule_email, customer["email"], str(existing_appointment), new_date.isoformat())
+        appointment = Appointment.from_mongo(existing_appointment)
+        appointment.date = new_date
+        tailor_info = {
+            "name": user["name"],
+            "email": user["email"],
+            "address": user.get("address", "N/A"),
+            "phone": user.get("phone", "N/A")
+        }
+        background_tasks.add_task(send_reschedule_email, customer["email"], appointment, new_date.isoformat(), tailor_info)
 
     return {"message": "Appointment rescheduled successfully"}
 
@@ -228,7 +273,14 @@ async def confirm_appointment(appointment_id: str, background_tasks: BackgroundT
     # Send confirmation email to customer
     customer = await customers_collection.find_one({"_id": ObjectId(existing_appointment["customer_id"])})
     if customer:
-        background_tasks.add_task(send_confirmation_email, customer["email"], str(existing_appointment))
+        appointment = Appointment.from_mongo(existing_appointment)
+        tailor_info = {
+            "name": user["name"],
+            "email": user["email"],
+            "address": user.get("address", "N/A"),
+            "phone": user.get("phone", "N/A")
+        }
+        background_tasks.add_task(send_confirmation_email, customer["email"], appointment, tailor_info)
 
     return {"message": "Appointment confirmed successfully"}
 
@@ -245,7 +297,14 @@ async def delete_appointment(appointment_id: str, background_tasks: BackgroundTa
     # Send deletion email to customer
     customer = await customers_collection.find_one({"_id": ObjectId(existing_appointment["customer_id"])})
     if customer:
-        background_tasks.add_task(send_deletion_email, customer["email"], str(existing_appointment))
+        appointment = Appointment.from_mongo(existing_appointment)
+        tailor_info = {
+            "name": user["name"],
+            "email": user["email"],
+            "address": user.get("address", "N/A"),
+            "phone": user.get("phone", "N/A")
+        }
+        background_tasks.add_task(send_deletion_email, customer["email"], appointment, tailor_info)
 
     return {"message": "Appointment deleted successfully"}
 

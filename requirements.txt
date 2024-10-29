@@ -7,3 +7,4 @@ pycryptodome
 python-jose
 pymongo~=4.9.2
 fastapimail
+auth0-python
