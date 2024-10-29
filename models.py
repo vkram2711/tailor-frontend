@@ -54,3 +54,11 @@ class Appointment(MongoModel):
     date: datetime
     confirmed: Optional[bool] = False
     tailor_id: Optional[str] = None
+
+
+class TailorProfile:
+    name: str
+    email: Optional[str]
+    phone: str
+    address: str
+

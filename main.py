@@ -7,9 +7,10 @@ from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 
-from auth0_utils import get_current_user, AUTH0_DOMAIN, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, API_IDENTIFIER, get_tailor_metadata
+from auth0_utils import get_current_user, AUTH0_DOMAIN, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, API_IDENTIFIER, get_tailor_metadata, \
+    update_tailor_metadata
 from mail_utils import send_confirmation_email, send_reschedule_email, send_deletion_email
-from models import Customer, Measurement, Appointment
+from models import Customer, Measurement, Appointment, TailorProfile
 from mongo_utils import customers_collection, appointments_collection
 
 pending_appointments = []
@@ -180,7 +181,7 @@ async def create_appointment_for_customer(tailor_id: str, appointment: Appointme
     pending_appointments.append(str(appointment_dict["_id"]))
 
     # Notify tailor (in a real-world scenario, you'd use a proper notification system)
-    background_tasks.add_task(notify_tailor, tailor_id, str(appointment_dict["_id"]))
+    background_tasks.add_task(send_reschedule_email, customer["email"], appointment, new_date.isoformat(), tailor_info)
 
     return {"message": "Appointment booked successfully", "id": str(appointment_dict["_id"])}
 
@@ -247,9 +248,9 @@ async def reschedule_appointment(appointment_id: str, new_date: datetime, backgr
     if customer:
         appointment = Appointment.from_mongo(existing_appointment)
         appointment.date = new_date
-        full_name, address, phone_number, email = get_tailor_metadata(user["sub"])
+        name, address, phone_number, email = get_tailor_metadata(user["sub"])
         tailor_info = {
-            "name": full_name,
+            "name": name,
             "email": email,
             "address": address,
             "phone": phone_number
@@ -275,9 +276,9 @@ async def confirm_appointment(appointment_id: str, background_tasks: BackgroundT
     customer = await customers_collection.find_one({"_id": ObjectId(existing_appointment["customer_id"])})
     if customer:
         appointment = Appointment.from_mongo(existing_appointment)
-        full_name, address, phone_number, email = get_tailor_metadata(user["sub"])
+        name, address, phone_number, email = get_tailor_metadata(user["sub"])
         tailor_info = {
-            "name": full_name,
+            "name": name,
             "email": email,
             "address": address,
             "phone": phone_number
@@ -300,9 +301,9 @@ async def delete_appointment(appointment_id: str, background_tasks: BackgroundTa
     customer = await customers_collection.find_one({"_id": ObjectId(existing_appointment["customer_id"])})
     if customer:
         appointment = Appointment.from_mongo(existing_appointment)
-        full_name, address, phone_number, email = get_tailor_metadata(user["sub"])
+        name, address, phone_number, email = get_tailor_metadata(user["sub"])
         tailor_info = {
-            "name": full_name,
+            "name": name,
             "email": email,
             "address": address,
             "phone": phone_number
@@ -323,5 +324,25 @@ async def get_user_id(user: dict = Depends(get_current_user)):
     return {"tailor_id": user["sub"]}
 
 
-async def notify_tailor(tailor_id: str, appointment_id: str):
-    print(f"Notification: New appointment {appointment_id} for tailor {tailor_id}")
+@app.get("api/tailor/profile")
+async def get_profile(user: dict = Depends(get_current_user)):
+    name, address, phone_number, email = get_tailor_metadata(user["sub"])
+    return {
+        "name": name,
+        "email": email,
+        "address": address,
+        "phone": phone_number
+    }
+
+
+@app.post("api/tailor/profile")
+async def edit_profile(profile: TailorProfile, user: dict = Depends(get_current_user)):
+    update_tailor_metadata(user["sub"], profile.name, profile.address, profile.phone)
+    name, address, phone_number, email = get_tailor_metadata(user["sub"])
+    return {
+        "name": name,
+        "email": email,
+        "address": address,
+        "phone": phone_number
+    }
+

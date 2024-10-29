@@ -16,6 +16,16 @@ email_config = ConnectionConfig(
 )
 
 
+def format_tailor_info(tailor_info):
+    return f"""
+    <h2>Tailor Information</h2>
+    {f"<p>Name: {tailor_info['name']}</p>" if tailor_info['name'] else ''}
+    {f"<p>Email: {tailor_info['email']}</p>" if tailor_info['email'] else ''}
+    {f"<p>Address: {tailor_info['address']}</p>" if tailor_info['address'] else ''}
+    {f"<p>Phone: {tailor_info['phone']}</p>" if tailor_info['phone'] else ''}
+    """
+
+
 def format_appointment_details(appointment: Appointment):
     details = f"""
     <p>Customer ID: {appointment.customer_id}</p>
@@ -31,6 +41,27 @@ def format_appointment_details(appointment: Appointment):
     return details
 
 
+async def send_appointment_creation_email(email: EmailStr, appointment: Appointment):
+    appointment_details = format_appointment_details(appointment)
+    message = MessageSchema(
+        subject="Appointment Created",
+        recipients=[email],
+        body=f"""
+            <html>
+            <body>
+                <h1>Appointment Confirmation</h1>
+                <p>Your appointment details:</p>
+                {appointment_details}
+                <hr>
+            </body>
+            </html>
+            """,
+        subtype="html"
+    )
+    fm = FastMail(email_config)
+    await fm.send_message(message)
+
+
 async def send_confirmation_email(email: EmailStr, appointment: Appointment, tailor_info: dict):
     appointment_details = format_appointment_details(appointment)
     message = MessageSchema(
@@ -44,10 +75,7 @@ async def send_confirmation_email(email: EmailStr, appointment: Appointment, tai
             {appointment_details}
             <hr>
             <h2>Tailor Information</h2>
-            <p>Name: {tailor_info['name']}</p>
-            <p>Email: {tailor_info['email']}</p>
-            <p>Address: {tailor_info['address']}</p>
-            <p>Phone: {tailor_info['phone']}</p>
+            {format_tailor_info(tailor_info)}
         </body>
         </html>
         """,
@@ -69,11 +97,7 @@ async def send_reschedule_email(email: EmailStr, appointment: Appointment, new_d
             <p>Your appointment has been rescheduled to: {new_date}</p>
             {appointment_details}
             <hr>
-            <h2>Tailor Information</h2>
-            <p>Name: {tailor_info['name']}</p>
-            <p>Email: {tailor_info['email']}</p>
-            <p>Address: {tailor_info['address']}</p>
-            <p>Phone: {tailor_info['phone']}</p>
+            {format_tailor_info(tailor_info)}
         </body>
         </html>
         """,
@@ -95,15 +119,12 @@ async def send_deletion_email(email: EmailStr, appointment: Appointment, tailor_
             <p>Your appointment has been cancelled.</p>
             {appointment_details}
             <hr>
-            <h2>Tailor Information</h2>
-            <p>Name: {tailor_info['name']}</p>
-            <p>Email: {tailor_info['email']}</p>
-            <p>Address: {tailor_info['address']}</p>
-            <p>Phone: {tailor_info['phone']}</p>
+            {format_tailor_info(tailor_info)}
         </body>
         </html>
         """,
         subtype="html"
     )
+
     fm = FastMail(email_config)
     await fm.send_message(message)

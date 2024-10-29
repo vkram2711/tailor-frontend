@@ -33,20 +33,20 @@ auth0 = Auth0(AUTH0_DOMAIN, token['access_token'])
 
 def update_tailor_metadata(user_id, full_name, address, phone_number):
     metadata = {
-        "full_name": full_name,
+        "name": full_name,
         "address": address,
-        "phone_number": phone_number
+        "phone": phone_number
     }
-    auth0.users.update(user_id, {"user_metadata": metadata})
+    auth0.users.update(f"auth0|{user_id}", {"user_metadata": metadata})
 
 
 def get_tailor_metadata(user_id):
     user = auth0.users.get(f"auth0|{user_id}")
     metadata = user.get("user_metadata", {})
     email = user["email"]
-    full_name = metadata.get("full_name")
+    full_name = metadata.get("name")
     address = metadata.get("address")
-    phone_number = metadata.get("phone_number")
+    phone_number = metadata.get("phone")
     return full_name, address, phone_number, email
 
 
