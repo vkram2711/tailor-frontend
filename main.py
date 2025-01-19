@@ -68,7 +68,7 @@ async def callback(request: Request):
     if not access_token:
         raise HTTPException(status_code=400, detail="Access token not found")
 
-    frontend_url = f"http://localhost:3000/callback?token={access_token}"
+    frontend_url = f"{os.getenv('FRONTEND_URL')}/callback?token={access_token}"
     return RedirectResponse(frontend_url)
 
 
