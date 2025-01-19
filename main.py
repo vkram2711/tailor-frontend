@@ -4,6 +4,7 @@ from uuid import uuid4
 
 import requests
 from bson import ObjectId
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
@@ -18,6 +19,7 @@ pending_appointments = []
 
 app = FastAPI()
 
+load_dotenv()
 
 
 # Define the allowed origins
@@ -69,6 +71,7 @@ async def callback(request: Request):
         raise HTTPException(status_code=400, detail="Access token not found")
 
     frontend_url = f"{os.getenv('FRONTEND_URL')}/callback?token={access_token}"
+
     return RedirectResponse(frontend_url)
 
 
