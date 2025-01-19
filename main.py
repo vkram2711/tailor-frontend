@@ -1,10 +1,13 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from datetime import datetime
 from uuid import uuid4
 
 import requests
 from bson import ObjectId
-from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
@@ -18,9 +21,6 @@ from mongo_utils import customers_collection, appointments_collection
 pending_appointments = []
 
 app = FastAPI()
-
-load_dotenv()
-
 
 # Define the allowed origins
 origins = [
@@ -351,6 +351,7 @@ async def edit_profile(profile: TailorProfile, user: dict = Depends(get_current_
         "address": address,
         "phone": phone_number
     }
+
 
 if __name__ == "__main__":
     import uvicorn

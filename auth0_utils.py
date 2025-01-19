@@ -1,3 +1,5 @@
+import os
+
 import httpx
 from auth0.authentication import GetToken
 from auth0.management import Auth0
@@ -13,7 +15,7 @@ CLIENT_ID = 'lNGZlo4hyIadjhLfmE5q3ifVGKktsWdc'
 CLIENT_SECRET = 'jtWoQyGRYqlzbXl8G1XkcILNPBaNR3N_MLua1MNilWACeiPZgcXRT6bt0czLx7kY'
 API_IDENTIFIER = "https://dev-ktipr7loj1f84qfw.us.auth0.com/api/v2/"
 ALGORITHMS = ["RS256"]
-REDIRECT_URI = "http://localhost:8000/callback"
+REDIRECT_URI = f"{os.getenv('BACKEND_URL')}/callback"
 
 def strip_auth0_prefix(tailor_id: str) -> str:
     return tailor_id.replace("auth0|", "")
