@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from uuid import uuid4
 
@@ -16,6 +17,8 @@ from mongo_utils import customers_collection, appointments_collection
 pending_appointments = []
 
 app = FastAPI()
+
+
 
 # Define the allowed origins
 origins = [
@@ -346,3 +349,8 @@ async def edit_profile(profile: TailorProfile, user: dict = Depends(get_current_
         "phone": phone_number
     }
 
+if __name__ == "__main__":
+    import uvicorn
+
+    port = int(os.environ.get("PORT", 8000))  # Default to 8000 if PORT is not set
+    uvicorn.run(app, host="0.0.0.0", port=port)

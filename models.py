@@ -56,9 +56,14 @@ class Appointment(MongoModel):
     tailor_id: Optional[str] = None
 
 
+#class Availability(BaseModel):
+#    day_of_week: str  # e.g., "Monday"
+#    start_time: time
+#    end_time: time
+
 class TailorProfile(BaseModel):
     name: str
     email: Optional[str]
     phone: str
     address: str
-
+ #r   availability: List[Availability]  # New field for availability hours
