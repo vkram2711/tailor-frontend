@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
 
     const loginWithRedirect = (redirectUri = '/') => {
         // Redirect to your backend for login and get the token
-        window.location.href = `http://localhost:8000/login?redirect_uri=${redirectUri}`;
+        window.location.href = `${process.env.REACT_APP_BACKEND_BASE_URL}/login?redirect_uri=${redirectUri}`;
     };
 
     const logout = () => {
