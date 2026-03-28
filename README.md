@@ -1,3 +1,4 @@
+
 # Tailor — Client & Appointment Management for Tailors
 
 A SaaS platform built for independent tailors to manage their client relationships, appointments, and measurements in one place. Designed based on interviews with tailors across Bangkok and Buenos Aires, spanning budget through high-end segments.
@@ -21,6 +22,14 @@ A SaaS platform built for independent tailors to manage their client relationshi
 
 <img width="1280" height="627" alt="image" src="https://github.com/user-attachments/assets/81c8a1ea-219f-4ca0-b1b9-6b2d16da1137" />
 
+
+
+
+https://github.com/user-attachments/assets/ce00393b-a98b-4fcc-9837-a5fd50f01117
+
+
+
+ 
 [Figma prototype](https://www.figma.com/proto/9GJxFexcyyaDr6J3R84c0J/Tailor-web?page-id=0%3A1&node-id=1-2&p=f&viewport=-36%2C61%2C0.54&t=79utGpcBvNDRgquR-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=1%3A2) of future features
 
 ---
