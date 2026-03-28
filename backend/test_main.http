@@ -1,0 +1,104 @@
+### Set the base URL and authorization token
+@base_url = http://localhost:8000
+@auth_token =Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBpYll2WjQ2ZXFzQWNiRGtLMl9PWSJ9.eyJpc3MiOiJodHRwczovL2Rldi1rdGlwcjdsb2oxZjg0cWZ3LnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw2NmFkNmYyOWNjZTFlMGY1ZmEzNjI3NzMiLCJhdWQiOlsiaHR0cHM6Ly9kZXYta3RpcHI3bG9qMWY4NHFmdy51cy5hdXRoMC5jb20vYXBpL3YyLyIsImh0dHBzOi8vZGV2LWt0aXByN2xvajFmODRxZncudXMuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTcyOTU3MDc0NSwiZXhwIjoxNzI5NjU3MTQ1LCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIiwiYXpwIjoibE5HWmxvNGh5SWFkamhMZm1FNXEzaWZWR0trdHNXZGMifQ.PB19lIQlbXiji8humERnXqUKBjKZQU7LjDonP5hHyij__FBya_3CtUPNvfwrcO9irrMniUfAYzmlICe9RdGCCD7HVmaQkiPfiWJuhPFs1R1bTg-zvxTkCKNYmAwE0ao1Ljd1G3IolmK54o65Mrd-DsPKxTmi8G8Rmh23QIbWZ8CZ1EBnXjU-7WpZjncfgB8pxBWq1QDgXlQe0xm9NtQyP-NI04s1J0hhpett82pT7O8bp0RK25GawoC_isA3WjPvsGpuYdv7soKcGrWNMCQtNsLWJKhzjN7az6TGw-nNVHBvnTOcl0lWmi-m2MbkpXVs1qkFB6Hj_943rUhuIJC4iA
+
+### Test for getting a customer by ID
+GET {{base_url}}/api/customers/customer_id
+Authorization: {{auth_token}}
+
+### Test for getting all customers
+GET {{base_url}}/api/customers
+Authorization: {{auth_token}}
+
+### Test for creating a new customer
+POST {{base_url}}/api/customers
+Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "123-456-7890",
+  "gender": "male",
+  "measurements": [],
+  "additional_info": {
+    "notes": "Prefers evening appointments",
+    "preferences": "Slim fit"
+  },
+  "tailor_id": "60d5ec49f8d2b2a5c8b5e4d2"
+}
+
+### Test for updating customer information
+PUT {{base_url}}/api/customers/customer_id
+Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "John Doe Updated",
+  "email": "john.doe.updated@example.com",
+  "phone": "987-654-3210",
+  "gender": "male",
+  "measurements": [],
+  "additional_info": {
+    "notes": "Prefers morning appointments",
+    "preferences": "Regular fit"
+  },
+  "tailor_id": "60d5ec49f8d2b2a5c8b5e4d2"
+}
+
+### Test for deleting a customer
+DELETE {{base_url}}/api/customers/customer_id
+Authorization: {{auth_token}}
+
+### Test for getting user ID
+GET {{base_url}}/api/tailor/id
+Authorization: {{auth_token}}
+
+### Test for rescheduling an appointment
+PUT {{base_url}}/api/appointments/appointment_id/reschedule
+Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "new_date": "2023-12-31T12:00:00"
+}
+
+### Test for confirming an appointment
+PUT {{base_url}}/api/appointments/671725d9ae734e05bf048583/confirm
+Authorization: {{auth_token}}
+
+### Test for deleting an appointment
+DELETE {{base_url}}/api/appointments/appointment_id
+Authorization: {{auth_token}}
+
+### Test for getting an appointment
+GET {{base_url}}/api/appointments/670c51a76b5a3055e171e60b
+Authorization: {{auth_token}}
+
+
+### Test for creating an appointment
+POST {{base_url}}/api/appointments
+Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "customer_id": "670c4d0023115cf01829b471",
+  "request_work": "Tailoring a suit",
+  "date": "2023-12-31T12:00:00",
+  "tailor_id": "670afca3f7397b370e9d76c8"
+}
+
+### Test for creating an appointment with a tailor
+POST {{base_url}}/api/tailors/670afca3f7397b370e9d76c8/appointments
+Content-Type: application/json
+
+{
+  "customer_id": "670c4d0023115cf01829b471",
+  "request_work": "Tailoring a suit",
+  "additional_notes": "Please make it slim fit",
+  "date": "2023-12-31T12:00:00"
+}
+
+### Get all appointments for a tailor
+GET {{base_url}}/api/tailors/appointments
+Authorization: {{auth_token}}
