@@ -1,12 +1,17 @@
+import os
+
+from dotenv import load_dotenv
 from fastapi_mail import ConnectionConfig, MessageSchema, FastMail
 from pydantic import EmailStr
 
 from models import Appointment
 
+load_dotenv()
+
 email_config = ConnectionConfig(
-    MAIL_USERNAME="vkramarenko.at.work@gmail.com",
-    MAIL_PASSWORD="vwke yvva tolu rwlf",
-    MAIL_FROM="vkramarenko.at.work@gmail.com",
+    MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
+    MAIL_FROM=os.getenv("MAIL_FROM"),
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",
     MAIL_STARTTLS=True,

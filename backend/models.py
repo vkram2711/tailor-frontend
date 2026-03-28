@@ -66,4 +66,3 @@ class TailorProfile(BaseModel):
     email: Optional[str]
     phone: str
     address: str
- #r   availability: List[Availability]  # New field for availability hours

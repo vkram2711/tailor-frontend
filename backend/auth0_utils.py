@@ -3,17 +3,20 @@ import os
 import httpx
 from auth0.authentication import GetToken
 from auth0.management import Auth0
+from dotenv import load_dotenv
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 
+load_dotenv()
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-AUTH0_DOMAIN = "dev-ktipr7loj1f84qfw.us.auth0.com"
-CLIENT_ID = 'lNGZlo4hyIadjhLfmE5q3ifVGKktsWdc'
-CLIENT_SECRET = 'jtWoQyGRYqlzbXl8G1XkcILNPBaNR3N_MLua1MNilWACeiPZgcXRT6bt0czLx7kY'
-API_IDENTIFIER = "https://dev-ktipr7loj1f84qfw.us.auth0.com/api/v2/"
+AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
+CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
+CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
+API_IDENTIFIER = os.getenv("AUTH0_API_IDENTIFIER")
 ALGORITHMS = ["RS256"]
 REDIRECT_URI = f"{os.getenv('BACKEND_URL')}/callback"
 

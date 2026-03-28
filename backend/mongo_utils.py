@@ -1,12 +1,11 @@
-from fastapi import FastAPI
+import os
+
+from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 
-app = FastAPI()
+load_dotenv()
 
-uri = "mongodb+srv://vkram:8NTKwyd2cvfMYPrS@tailor.hvxg2.mongodb.net/?retryWrites=true&w=majority&appName=Tailor"
-
-# Replace the connection string with your MongoDB Atlas connection string
-client = AsyncIOMotorClient(uri)
+client = AsyncIOMotorClient(os.getenv("MONGODB_URI"))
 db = client.mydatabase
 customers_collection = db.customers
 appointments_collection = db.appointments

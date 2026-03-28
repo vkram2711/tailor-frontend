@@ -187,9 +187,6 @@ async def create_appointment_for_customer(tailor_id: str, appointment: Appointme
     # Add to pending appointments
     pending_appointments.append(str(appointment_dict["_id"]))
 
-    # Notify tailor (in a real-world scenario, you'd use a proper notification system)
-    background_tasks.add_task(send_reschedule_email, customer["email"], appointment, new_date.isoformat(), tailor_info)
-
     return {"message": "Appointment booked successfully", "id": str(appointment_dict["_id"])}
 
 
@@ -331,7 +328,7 @@ async def get_user_id(user: dict = Depends(get_current_user)):
     return {"tailor_id": user["sub"]}
 
 
-@app.get("api/tailor/profile")
+@app.get("/api/tailor/profile")
 async def get_profile(user: dict = Depends(get_current_user)):
     name, address, phone_number, email = get_tailor_metadata(user["sub"])
     return {
@@ -342,7 +339,7 @@ async def get_profile(user: dict = Depends(get_current_user)):
     }
 
 
-@app.post("api/tailor/profile")
+@app.post("/api/tailor/profile")
 async def edit_profile(profile: TailorProfile, user: dict = Depends(get_current_user)):
     update_tailor_metadata(user["sub"], profile.name, profile.address, profile.phone)
     name, address, phone_number, email = get_tailor_metadata(user["sub"])
