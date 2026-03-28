@@ -22,6 +22,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     nginx \
     supervisor \
+    gettext-base \
     gcc \
     libffi-dev \
     && rm -rf /var/lib/apt/lists/*
