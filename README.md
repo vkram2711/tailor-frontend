@@ -3,8 +3,6 @@
 
 A SaaS platform built for independent tailors to manage their client relationships, appointments, and measurements in one place. Designed based on interviews with tailors across Bangkok and Buenos Aires, spanning budget through high-end segments.
 
----
-
 ## Features
 
 - **Client management** — store client profiles, contact details, and notes
@@ -15,8 +13,6 @@ A SaaS platform built for independent tailors to manage their client relationshi
 - **Tailor profile** — set your name, address, and phone number shown to clients in emails
 - **Multi-language support** — English and Spanish (i18n-ready)
 - **Auth0 authentication** — secure login for tailors
-
----
 
 ## Preview
 
@@ -32,7 +28,6 @@ https://github.com/user-attachments/assets/ce00393b-a98b-4fcc-9837-a5fd50f01117
  
 [Figma prototype](https://www.figma.com/proto/9GJxFexcyyaDr6J3R84c0J/Tailor-web?page-id=0%3A1&node-id=1-2&p=f&viewport=-36%2C61%2C0.54&t=79utGpcBvNDRgquR-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=1%3A2) of future features
 
----
 
 ## Tech Stack
 
@@ -45,7 +40,6 @@ https://github.com/user-attachments/assets/ce00393b-a98b-4fcc-9837-a5fd50f01117
 | Email | Gmail SMTP via fastapi-mail |
 | Deployment | Heroku (frontend + backend) |
 
----
 
 ## Project Structure
 
@@ -74,7 +68,6 @@ fullstack-tailor/
     └── .env.example         # Environment variable template
 ```
 
----
 
 ## Getting Started
 
@@ -111,7 +104,6 @@ cp .env.example .env.local
 npm start
 ```
 
----
 
 ## Environment Variables
 
@@ -136,7 +128,6 @@ npm start
 |---|---|
 | `REACT_APP_BACKEND_BASE_URL` | Backend API base URL |
 
----
 
 ## API Overview
 
@@ -169,7 +160,6 @@ npm start
 | `GET/POST` | `/api/tailor/profile` | Get or update tailor profile |
 | `GET` | `/api/tailor/id` | Get authenticated tailor's ID |
 
----
 
 ## Deployment
 
